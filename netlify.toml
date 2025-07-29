@@ -4,4 +4,4 @@
   publish = "dist"
 
 [context.production.environment]
-  VITE_BACKEND_URL = "https://hackathon2025-i483.onrender.com"
+  VITE_BACKEND_URL = "https://hackathon2025-2o0v.onrender.com"

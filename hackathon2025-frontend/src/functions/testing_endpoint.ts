@@ -1,5 +1,5 @@
 export async function testingEndpoint(): Promise<string> {
-  const rootUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:8080"
+  const rootUrl = process.env.VITE_BACKEND_URL || "http://localhost:8080"
 
   const response = await fetch(`${rootUrl}/api/v1/test`, {
     method: "GET",
