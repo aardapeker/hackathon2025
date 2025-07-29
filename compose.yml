@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  backend:
+    container_name: hackathon2025-backend
+    # image: hackathon2025-backend
+    build:
+      context: ./hackathon2025-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/.config/gcloud/application_default_credentials.json:/tmp/keys/adc.json:ro
+    env_file:
+      - ./hackathon2025-backend/.env
+    restart: unless-stopped
+
+  frontend:
+    container_name: hackathon2025-frontend
+    # image: hackathon2025-frontend
+    build:
+      context: ./hackathon2025-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    env_file:
+      - ./hackathon2025-frontend/.env
+    restart: unless-stopped

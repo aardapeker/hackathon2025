@@ -1,0 +1,7 @@
+[build]
+  base = "hackathon2025-frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[context.production.environment]
+  VITE_BACKEND_URL = "https://hackathon2025-i483.onrender.com"
