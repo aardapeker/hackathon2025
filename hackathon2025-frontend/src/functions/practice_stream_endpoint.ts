@@ -1,5 +1,5 @@
 export async function getPracticeStream(param: string) {
-  const rootUrl = process.env.VITE_BACKEND_URL || "http://localhost:8080"
+  const rootUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080"
 
   const response = await fetch(
     `${rootUrl}/api/v1/practice/stream?message=${encodeURIComponent(param)}`,
