@@ -130,20 +130,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-/* Custom Scrollbar Styles */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: var(--muted-foreground) transparent;
-}
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--muted-foreground);
-  border-radius: 8px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
-}

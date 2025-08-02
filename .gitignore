@@ -58,5 +58,4 @@ dist-ssr
 *.sw?
 
 ### Personal ###
-**/_temp/**
 todo.md

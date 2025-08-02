@@ -5,9 +5,6 @@ export async function getPracticeStream(param: string) {
     `${rootUrl}/api/v1/practice/stream?message=${encodeURIComponent(param)}`,
     {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
     },
   )
 

@@ -3,7 +3,6 @@ version: "3.8"
 services:
   backend:
     container_name: hackathon2025-backend
-    # image: hackathon2025-backend
     build:
       context: ./hackathon2025-backend
       dockerfile: Dockerfile
@@ -17,7 +16,6 @@ services:
 
   frontend:
     container_name: hackathon2025-frontend
-    # image: hackathon2025-frontend
     build:
       context: ./hackathon2025-frontend
       dockerfile: Dockerfile

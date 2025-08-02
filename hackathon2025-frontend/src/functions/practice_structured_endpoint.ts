@@ -8,9 +8,6 @@ export async function getStructuredPractice(message: string): Promise<Output> {
   )}`
   const response = await fetch(url, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
   })
   if (!response.ok) {
     throw new Error(`Error: ${response.status} ${response.statusText}`)

@@ -3,9 +3,6 @@ export async function testingEndpoint(): Promise<string> {
 
   const response = await fetch(`${rootUrl}/api/v1/test`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
   })
 
   if (!response.ok) {

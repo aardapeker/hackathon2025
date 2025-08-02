@@ -1,0 +1,12 @@
+node_modules
+.git
+.gitignore
+todo.md
+Dockerfile
+*.log
+.env
+dist
+build
+.vscode
+*.tsbuildinfo
+coverage

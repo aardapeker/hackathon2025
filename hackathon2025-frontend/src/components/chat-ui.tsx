@@ -1,43 +1,34 @@
-import { Send, User, Bot, Mic, Plus } from "lucide-react"
-import { Textarea } from "./ui/textarea"
-import { Form, useActionData } from "react-router-dom"
+import { useActionData } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
-import type { Message, Output } from "@/types"
+import type { Message, Output, Voice } from "@/types"
 import { nanoid } from 'nanoid'
+import playSpeech from "@/functions/play_speech"
 
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    role: "user",
-    content: "Hi",
-  },
-  {
-    id: "2",
-    role: "assistant",
-    content: {
-      "chatOutput": "✅ Perfect English! No mistakes found!\n---\nHi! How can I help you today?",
-      "fixedInput": "Hi",
-      "fixSteps": "No errors",
-      "nextChatMessages": [
-        "Ask me a question about English grammar",
-        "Tell me about something you did today",
-        "Ask me about my hobbies"
-      ]
-    }
-  },
-]
+import TypingIndicator from "./typing-indicator"
+import ChatMessages from "./chat-messages"
+import InputForm from "./input-form"
 
 export default function ChatUI() {
+  const savedStr = localStorage.getItem("settings")
+  const saved: Voice = savedStr ? JSON.parse(savedStr) : { languageCode: "en-US", voiceName: "en-US-Wavenet-D", voiceGender: "MALE" }
+
   const [loading, setLoading] = useState<boolean>(false)
   const [hasInput, setHasInput] = useState<boolean>(false)
-  const [messages, setMessages] = useState(initialMessages)
+  const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState("")
+  const [settingsData, setSettingsData] = useState(saved)
 
   const suggestionFormRef = useRef<HTMLFormElement>(null)
   const suggestionInputRef = useRef<HTMLInputElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
 
   const actionData = useActionData() as Output
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   useEffect(() => {
     if (actionData) {
@@ -96,6 +87,53 @@ export default function ChatUI() {
 
   }
 
+  const handleResult = (data: string, isFinal: boolean) => {
+    if (!isFinal) return
+    console.log(123123)
+
+    console.log(data)
+    if (!data.trim()) {
+      return
+    }
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: nanoid(),
+        role: "user",
+        content: data
+      }
+    ])
+    setLoading(true)
+    setInputValue("")
+    setHasInput(false)
+
+    // formRef.current?.requestSubmit()
+  }
+
+  const handleSpeak = (text: string) => {
+
+    console.log(settingsData, "from handle Speak")
+
+    playSpeech(text, settingsData.voiceName, settingsData.voiceGender, settingsData.languageCode)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.shiftKey && e.key === "Enter") {
+      if (!inputValue.trim()) {
+        e.preventDefault()
+        return
+
+      }
+      e.preventDefault()
+      formRef.current?.requestSubmit()
+    }
+  }
+
+  const handleData = (data: Voice) => {
+    console.log(data)
+    setSettingsData(data)
+  }
+
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
       {/* Header */}
@@ -106,182 +144,42 @@ export default function ChatUI() {
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-scroll custom-scrollbar">
-        <div className="max-w-4xl px-3 mx-auto">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`group px-4 py-4 my-3  ${message.role === "assistant"
-                ? "bg-card text-left"
-                : "bg-background text-right max-w-lg w-fit"
-                } rounded-xl shadow-md border border-border`}
-              style={{
-                marginLeft: message.role === "assistant" ? "0" : "auto",
-                marginRight: message.role === "assistant" ? "auto" : "0",
-              }}
-            >
-              {/* Avatar */}
-              {message.role === "assistant" ? (
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-success text-success-foreground flex items-center justify-center">
-                      <Bot className="w-4 h-4" />
-                    </div>
-                  </div>
-                  {/* Message Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="whitespace-pre-wrap leading-relaxed text-foreground">
-                      {/* Corrected Input */}
-                      <div>
-                        <span className="font-semibold text-success">Corrected Input:</span>
-                        <span className="ml-2">{(message.content as Output).fixedInput}</span>
-                      </div>
-                      {/* Chat Output */}
-                      <div>
-                        <span className="font-semibold text-primary">Chat Output:</span>
-                        <span className="ml-2">{(message.content as Output).chatOutput}</span>
-                      </div>
-                      {/* Fix Steps */}
-                      <div>
-                        <span className="font-semibold text-warning">Fix Steps:</span>
-                        <span className="ml-2">{(message.content as Output).fixSteps}</span>
-                      </div>
-                      {/* Next Chat Messages */}
-                      <div>
-                        <span className="font-semibold text-muted-foreground">Suggestions:</span>
-                        <Form method="post" className="relative" onSubmit={handleSubmit} ref={suggestionFormRef}>
-                          <input
-                            ref={suggestionInputRef}
-                            type="hidden"
-                            name="content"
-                          />
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {(message.content as Output).nextChatMessages.map((msg, idx) => (
-
-                              <button
-                                key={idx}
-                                type="button"
-                                className="px-3 py-1 rounded-xl bg-muted text-muted-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm transition-colors duration-200"
-                                tabIndex={-1}
-                                onClick={() => handleClick(msg)}
-                              >
-                                {msg}
-                              </button>
-                            ))}
-                          </div>
-                        </Form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex gap-3">
-                  {/* Message Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="whitespace-pre-wrap leading-relaxed text-foreground">
-                      {message.content as string}
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-info text-info-foreground flex items-center justify-center">
-                      <User className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Typing Indicator */}
-          {loading && (
-            <div
-              className="group px-4 py-4 my-3 bg-card text-left rounded-xl shadow-md border border-border"
-              style={{
-                marginLeft: "0",
-                marginRight: "auto",
-              }}
-            >
-              <div className="flex gap-3 items-start">
-                {/* Avatar */}
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 rounded-full bg-success text-success-foreground flex items-center justify-center">
-                    <Bot className="w-4 h-4" />
-                  </div>
-                </div>
-                {/* Typing Dots */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-1 py-2">
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
+      <div className={`flex-1 custom-scrollbar ${messages.length !== 0 ? "overflow-y-scroll" : ""}`}>
+        <div className={` max-w-4xl px-3 mx-auto ${messages.length === 0 ? "flex flex-col justify-end items-center h-full" : ""}`}  >
+          {messages.length !== 0 ? (
+            <ChatMessages messages={messages} onSubmit={handleSubmit} onClick={handleClick} onSpeak={handleSpeak} suggestionFormRef={suggestionFormRef} suggestionInputRef={suggestionInputRef} />
+          ) : (
+            <div className="rounded-lg p-4">
+              <span className="text-muted-foreground text-3xl font-semibold">
+                Hello! What subject would you like to discuss?
+              </span>
             </div>
           )}
+
+          {/* Typing Indicator */}
+          {loading && <TypingIndicator />}
+
+          {/* Scroll anchor */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-border bg-background">
+      <div className={`border-border bg-background ${messages.length === 0 ? "h-2/3" : "border-t h-auto"}`}>
         <div className="max-w-4xl mx-auto px-3 py-6">
-          <Form method="post" className="relative" onSubmit={handleSubmit}>
-            <div className="flex-1 min-h-[56px] max-h-[200px] flex items-center">
-              <div className="relative w-full">
-                {/* Large Input Container */}
-                <div className="flex flex-col bg-card border border-border rounded-3xl shadow-sm hover:shadow-lg transition-all duration-200 focus-within:shadow-lg focus-within:border-ring min-h-[56px]">
-                  {/* Text Input */}
-                  <div className="flex-1 flex items-center px-3 py-3">
-                    <Textarea
-                      name="content"
-                      placeholder="Ask anything..."
-                      className="w-full px-3 py-2 resize-none border-0 rounded-2xl bg-transparent shadow-none text-foreground placeholder-muted-foreground focus:outline-none focus-visible:ring-0 focus:ring-0 text-base leading-6"
-                      rows={1}
-                      value={inputValue}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  {/* Footer Buttons */}
-                  <div className="flex items-center justify-between px-3 py-2 border-t border-border">
-                    {/* Tools Button */}
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors duration-200"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span className="hidden sm:inline">Tools</span>
-                    </button>
-                    <div className="flex gap-2">
-                      {/* Microphone Button */}
-                      <button
-                        type="button"
-                        className="flex items-center justify-center w-10 h-10 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors duration-200"
-                      >
-                        <Mic className="w-5 h-5" />
-                      </button>
-                      {/* Send Button */}
-                      <button
-                        type="submit"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={!hasInput}
-                      >
-                        <Send className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Form>
+          <InputForm
+            onSubmit={handleSubmit}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onData={handleData}
+            onResult={handleResult}
+            inputValue={inputValue}
+            hasInput={hasInput}
+            formRef={formRef}
+          />
+
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   )
 }

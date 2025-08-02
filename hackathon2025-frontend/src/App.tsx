@@ -8,8 +8,6 @@ import { chatAction } from "./functions/actions"
 import ChatUI from "./components/chat-ui"
 
 function App() {
-
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -29,9 +27,6 @@ function App() {
   return (
     <RouterProvider router={router} />
   )
-
-
-
 }
 
 export default App
