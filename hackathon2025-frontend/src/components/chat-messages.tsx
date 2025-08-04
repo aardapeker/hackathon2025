@@ -1,11 +1,12 @@
 import { Bot, User, Volume2 } from "lucide-react"
 import { Button } from "./ui/button"
 import { Form } from "react-router-dom"
-import type { ErrorKey, Message, Output } from "@/types"
+import type { Message, Output } from "@/types"
 import ReactMarkdown from "react-markdown"
 import { errorLabels } from "@/constants/error_labels"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
-
+import { diffChars } from "diff"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 
 type MessageProps = {
   messages: Message[]
@@ -17,8 +18,29 @@ type MessageProps = {
 }
 
 function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef, suggestionInputRef }: MessageProps) {
-  return messages.map((message) => (
-    <div
+
+  return messages.map((message, idx) => {
+    let originalInput = ""
+    let fixedInput = ""
+
+    if (message.role === "assistant") {
+      // Find the previous user message
+      for (let i = idx - 1;i >= 0;i--) {
+        if (messages[i].role === "user") {
+          originalInput = messages[i].content as string
+          break
+        }
+      }
+      fixedInput = (message.content as Output).fixedInput || ""
+    }
+
+    let diff: import("diff").ChangeObject<string>[] = []
+    if (originalInput && fixedInput) {
+      diff = diffChars(originalInput, fixedInput)
+    }
+
+
+    return <div
       key={message.id}
       className={`group px-4 py-4 my-3  ${message.role === "assistant"
         ? "bg-card text-left"
@@ -29,8 +51,11 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
         marginRight: message.role === "assistant" ? "auto" : "0",
       }}
     >
+
       {/* Avatar */}
+
       {message.role === "assistant" ? (
+
         <div className="flex gap-3">
           <div className="flex-shrink-0">
             <div className="w-8 h-8 rounded-full bg-success text-success-foreground flex items-center justify-center">
@@ -40,15 +65,15 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
           {/* Message Content */}
           <div className="flex-1 min-w-0">
             <div className="whitespace-pre-wrap leading-relaxed text-foreground">
-              {/* Corrected Input */}
-              <div>
-                <span className="font-semibold text-success">Corrected Input:</span>
-                <span className="ml-2">{(message.content as Output).fixedInput}</span>
-              </div>
               {/* Chat Output */}
               <div>
                 <span className="font-semibold text-primary">Chat Output:</span>
-                <span className="ml-2">{(message.content as Output).chatOutput}</span>
+                <span className="ml-2">
+                  <ReactMarkdown>
+                    {(message.content as Output).chatOutput}
+                  </ReactMarkdown>
+                </span>
+
                 <Button
                   type="button"
                   className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:disabled:text-muted-foreground transition-colors duration-200 disabled:cursor-not-allowed"
@@ -58,21 +83,59 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                   <Volume2 />
                 </Button>
               </div>
+              {/* Corrected Input */}
+              <TooltipProvider>
+                <div>
+                  <span className="font-semibold text-success">Corrected Input:</span>
+                  {diff.map((part, idx) => {
+                    // green for additions, red for deletions
+                    const color = part.added ? "var(--success)" :
+                      part.removed ? "var(--destructive)" :
+                        undefined
+
+
+                    const style: React.CSSProperties = {
+                      ...(color ? { color } : {}),
+                      ...(part.removed ? { textDecoration: "line-through" } : {}),
+                    }
+
+                    if (part.added) {
+                      return (
+                        <Tooltip key={idx}>
+                          <TooltipTrigger asChild>
+                            <span style={style}>{part.value}</span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            Added
+                          </TooltipContent>
+                        </Tooltip>
+                      )
+                    }
+
+                    return (
+                      <span key={idx} style={style}>
+                        {part.value}
+                      </span>
+                    )
+                  })}
+                  <span className="ml-2">{(message.content as Output).fixedInput}</span>
+                </div>
+              </TooltipProvider>
               {/* Fix Steps */}
               <div>
                 <span className="font-semibold text-warning">Fix Steps:</span>
                 <span className="ml-2">
 
                   {(message.content as Output).fixSteps.map((step, idx) => {
-                    const key = Object.keys(step)[0] as ErrorKey
-                    const md = Object.values(step)[0]
+                    const key = step.type
+                    const md = step.explanation
 
                     return (
                       <Accordion
                         key={idx}
                         type="multiple"
                         className="w-full"
-                        defaultValue={["item-1", "item-2", "item-3"]}
+                        defaultValue={[]}
                       >
                         <div className="mb-2">
                           <AccordionItem value={`item-${idx + 1}`}>
@@ -108,14 +171,15 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                         type="button"
                         className="px-3 py-1 rounded-xl bg-muted text-muted-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm transition-colors duration-200"
                         tabIndex={-1}
-                        onClick={() => onClick(msg)}
+                        onClick={() => onClick(msg.topic)}
                       >
-                        {msg}
+                        {msg.topic}
                       </Button>
                     ))}
                   </div>
                 </Form>
               </div>
+
             </div>
           </div>
         </div>
@@ -137,7 +201,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
       )}
     </div>
 
-  ))
+  })
 
 }
 

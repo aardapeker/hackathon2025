@@ -1,6 +1,8 @@
-import type { Output } from "@/types"
+import type { PracticeResponse } from "@/types"
 
-export async function getStructuredPractice(message: string): Promise<Output> {
+export async function getStructuredPractice(
+  message: string,
+): Promise<PracticeResponse> {
   const rootUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080"
 
   const url = `${rootUrl}/api/v1/practice/structured?message=${encodeURIComponent(

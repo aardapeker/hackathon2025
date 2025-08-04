@@ -18,4 +18,5 @@ export const errorLabels: Record<ErrorKey, string> = {
   pronounUsage: "Pronoun Usage",
   negation: "Negation",
   modalUsage: "Modal Usage",
+  misc: "Miscellaneous",
 }
