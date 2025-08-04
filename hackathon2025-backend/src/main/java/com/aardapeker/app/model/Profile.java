@@ -9,9 +9,16 @@ import java.io.Serializable;
 public class Profile implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long id;
+    private Long id;
 
-    public String name;
+    private String name;
+
+    public Profile() {
+    }
+
+    public Profile(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;

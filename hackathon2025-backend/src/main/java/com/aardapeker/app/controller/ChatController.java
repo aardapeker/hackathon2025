@@ -1,7 +1,6 @@
 package com.aardapeker.app.controller;
 
 import com.aardapeker.app.TTSService;
-import com.aardapeker.app.dto.Output;
 import com.aardapeker.app.dto.PracticeResponse;
 import com.aardapeker.app.prompts.SystemPrompts;
 

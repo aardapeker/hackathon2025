@@ -17,17 +17,25 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
-    @Cacheable(value = "PROFILE_CACHE", key = "#id")
+    @Cacheable(value = PROFILE_CACHE, key = "#id")
     public Profile getProfile(Long id) {
+        System.out.println("Cache MISS for profile ID: " + id + " - Loading from database");
         return profileRepository.findById(id).orElse(null);
     }
 
-    @CachePut(value = "PROFILE_CACHE", key = "#result.id")
+    @CachePut(value = PROFILE_CACHE, key = "#result.id")
     public Profile createProfile(Profile profile) {
-        return profileRepository.save(profile);
+        System.out.println("Creating profile: " + profile.getName());
+        try {
+            return profileRepository.save(profile);
+        } catch (Exception e) {
+            System.err.println("Error creating profile: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
-    @CachePut(value = "PROFILE_CACHE", key = "#result.id")
+    @CachePut(value = PROFILE_CACHE, key = "#result.id")
     public Profile updateProfile(Profile profile) {
         Long profileId = profile.getId();
         Profile existingProfile = profileRepository.findById(profileId).orElse(null);
@@ -41,7 +49,7 @@ public class ProfileService {
 
     }
 
-    @CacheEvict(value = "PROFILE_CACHE", key = "#id")
+    @CacheEvict(value = PROFILE_CACHE, key = "#id")
     public void deleteProfile(Long id) {
         profileRepository.deleteById(id);
     }
