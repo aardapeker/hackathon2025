@@ -1,11 +1,11 @@
 package com.aardapeker.app.dto;
 
 import java.util.List;
-import java.util.Map;
 
 public record Output(
+        String originalInput,
         String fixedInput,
-        List<Map<String, String>> fixSteps,
+        List<FixStep> fixSteps,
         String chatOutput,
-        List<String> nextChatMessages
+        List<NextChatMessage> nextChatMessages
 ) {}
