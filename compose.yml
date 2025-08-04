@@ -11,8 +11,6 @@ services:
     env_file:
       - ./hackathon2025-backend/.env
     restart: unless-stopped
-    depends_on:
-      - redis
 
   frontend:
     container_name: hackathon2025-frontend
@@ -24,9 +22,3 @@ services:
     env_file:
       - ./hackathon2025-frontend/.env
     restart: unless-stopped
-
-  redis:
-    container_name: hackathon2025-redis
-    image: redis:latest
-    ports:
-      - "6379:6379"

@@ -1,6 +1,6 @@
 import { useActionData } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
-import type { Message, PracticeResponse, Question, Voice } from "@/types"
+import type { Message, PracticeResponse, Voice } from "@/types"
 import { nanoid } from 'nanoid'
 import playSpeech from "@/functions/play_speech"
 
