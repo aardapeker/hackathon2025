@@ -45,7 +45,6 @@ function InputForm({
                 <VoiceInput onResult={onResult} />
                 {/* Send Button */}
                 <SendButton hasInput={hasInput} />
-
               </div>
             </div>
           </div>

@@ -2,91 +2,128 @@ import { Button } from "./ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Label } from "./ui/label"
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
-import type { Question } from "@/types"
-import { useState } from "react"
+import type { ErrorKey, Question } from "@/types"
+import { useRef, useState } from "react"
+import { Progress } from "./ui/progress"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
+import { Form, useSubmit } from "react-router-dom"
 
-function Quiz({ questions }: { questions: Question[] }) {
+export type UserAnswer = {
+  category: ErrorKey
+  questionText: string
+  correctAnswer: string
+  selectedAnswer: string
+}
+
+function Quiz({ questions, onIsLoading }: { questions: Question[]; onIsLoading: (value: boolean) => void }) {
   const [selectedAnswer, setSelectedAnswer] = useState("")
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [openAccordions, setOpenAccordions] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const submit = useSubmit()
+  const progressPercentage = ((currentQuestionIndex) / questions.length) * 100
 
+  const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const newAnswer: UserAnswer = {
+      category: questions[currentQuestionIndex].category,
+      questionText: questions[currentQuestionIndex].questionText,
+      correctAnswer: questions[currentQuestionIndex].correctAnswer,
+      selectedAnswer: questions[currentQuestionIndex].options[+selectedAnswer]
+    }
+    const newAnswers = [...userAnswers, newAnswer]
+    setUserAnswers(newAnswers)
 
-  const handleNext = () => {
-    if (currentQuestionIndex < 4) {
+    if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
-
+      setSelectedAnswer("")
+      setOpenAccordions([])
+    } else {
+      const formData = new FormData()
+      formData.append("quizAnswers", JSON.stringify(newAnswers))
+      submit(formData, { method: "post" })
+      setIsLoading(true)
+      onIsLoading(true)
     }
   }
+
   return (
-    <div className="min-h-screen bg-gray-950 dark:bg-gray-950 light:bg-gradient-to-br light:from-purple-50 light:via-pink-50 light:to-purple-100 flex items-center justify-center p-4">
-      <Card className="neon-card w-full max-w-2xl bg-gradient-to-br from-gray-900 via-gray-900 to-purple-900/20 dark:from-gray-900 dark:via-gray-900 dark:to-purple-900/20 light:from-white light:via-purple-50/50 light:to-pink-50/50 border border-purple-500/20 dark:border-purple-500/20 light:border-purple-300/30">
-        <CardHeader>
-          <div className="flex items-center justify-between mb-4">
-            <CardTitle className="text-2xl font-bold text-white dark:text-white light:text-gray-800">
-              Question {currentQuestionIndex + 1} of {questions.length}
-            </CardTitle>
-            {/* <div className="flex items-center gap-2 text-lg font-semibold">
-              <Clock className="w-5 h-5 text-white dark:text-white light:text-gray-700" />
-              <span className={`${timeLeft <= 10 ? "text-red-400" : "text-white dark:text-white light:text-gray-700"}`}>
-                {timeLeft}s
-              </span>
-            </div> */}
-          </div>
-
-          {/* Progress bar */}
-          {/* <div className="space-y-2">
-            <Progress value={progressPercentage} className="w-full" />
-            <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 text-center">
-              {Math.round(progressPercentage)}% Complete
-            </p>
-          </div> */}
-
-          {/* Timer bar */}
-          {/* <div className="w-full bg-gray-700 dark:bg-gray-700 light:bg-gray-200 rounded-full h-2 mt-4">
-            <div
-              className={`h-2 rounded-full transition-all duration-1000 ${getTimerColor()}`}
-              style={{ width: `${(timeLeft / 30) * 100}%` }}
-            />
-          </div> */}
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          <h2 className="text-xl font-semibold leading-relaxed text-white dark:text-white light:text-gray-800">
-            {questions[currentQuestionIndex].questionText}
-          </h2>
-
-          <RadioGroup value={selectedAnswer} onValueChange={setSelectedAnswer} className="space-y-3">
-            {questions[currentQuestionIndex].options.map((option, index) => (
-              <div
-                key={index}
-                className={`flex items-center space-x-3 p-4 rounded-lg border-2 transition-all cursor-pointer hover:bg-gray-800/50 dark:hover:bg-gray-800/50 light:hover:bg-purple-50/50 ${selectedAnswer === index.toString()
-                  ? "border-purple-400 bg-purple-900/30 dark:border-purple-400 dark:bg-purple-900/30 light:border-purple-500 light:bg-purple-100/50"
-                  : "border-purple-400/30 dark:border-purple-400/30 light:border-purple-300/40"
-                  }`}
-                onClick={() => setSelectedAnswer(index.toString())}
+    <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center p-4">
+      <Form className="w-full" ref={formRef} onSubmit={handleNext}>
+        <Card className="bg-card">
+          <CardHeader>
+            <div className="flex items-center justify-between mb-4">
+              <CardTitle className="text-2xl font-bold text-foreground">
+                Question {currentQuestionIndex + 1} of {questions.length}
+              </CardTitle>
+            </div>
+            {/* Progress bar */}
+            <div className="space-y-2">
+              <Progress value={progressPercentage} className="w-full" />
+              <p className="text-sm text-foreground text-center">
+                {Math.round(progressPercentage)}% Complete
+              </p>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <h2 className="text-xl font-semibold leading-relaxed ">
+              {questions[currentQuestionIndex].questionText}
+            </h2>
+            <RadioGroup value={selectedAnswer} onValueChange={setSelectedAnswer} className="space-y-3" >
+              {questions[currentQuestionIndex].options.map((option, index) => (
+                <div className="flex flex-col" key={index}>
+                  <div
+                    className={` flex items-center space-x-3 p-4 rounded-lg transition-all cursor-pointer hover:bg-accent hover:text-accent-foreground ${selectedAnswer === index.toString()
+                      ? `${option === questions[currentQuestionIndex].correctAnswer ? "bg-success hover:bg-success" : "bg-destructive hover:bg-destructive"}  text-accent-foreground`
+                      : (selectedAnswer !== "" && questions[currentQuestionIndex].correctAnswer === option ? "bg-success hover:bg-success" : "bg-secondary text-muted-foreground ")
+                      }`}
+                    style={selectedAnswer !== "" ? { pointerEvents: "none" } : {}}
+                  >
+                    <RadioGroupItem value={index.toString()} id={`option-${index}`} className={`text-foreground `} disabled={selectedAnswer !== "" ? true : false} />
+                    <Label
+                      htmlFor={`option-${index}`}
+                      className="flex-1 cursor-pointer text-lg text-balance hover:text-foreground"
+                    >
+                      {option}
+                    </Label>
+                  </div>
+                  {(selectedAnswer === index.toString() || questions[currentQuestionIndex].correctAnswer === option) && <div className={`p-3 text-muted-foreground ${selectedAnswer === "" && "hidden"}`}>
+                    {selectedAnswer !== "" && questions[currentQuestionIndex].explanation[option]}
+                  </div>}
+                </div>
+              ))}
+            </RadioGroup>
+            <div className="flex justify-end pt-4">
+              <Button
+                type="submit"
+                variant="secondary"
+                disabled={!selectedAnswer || isLoading}
+                size="lg"
+                className="text-muted-foreground hover:text-accent-foreground rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <RadioGroupItem value={index.toString()} id={`option-${index}`} className="text-purple-400" />
-                <Label
-                  htmlFor={`option-${index}`}
-                  className="flex-1 cursor-pointer text-lg text-white dark:text-white light:text-gray-800"
-                >
-                  {option}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-
-          <div className="flex justify-end pt-4">
-            <Button
-              onClick={handleNext}
-              disabled={!selectedAnswer}
-              size="lg"
-              className="neon-button bg-gradient-to-r from-pink-700 to-purple-800 hover:from-pink-800 hover:to-purple-950 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {currentQuestionIndex === 4 ? "Finish Quiz" : "Next Question"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+                {isLoading && "Loading" || currentQuestionIndex === (questions.length - 1) ? "Finish Quiz" : "Next Question"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </Form>
+      <Accordion
+        type="multiple"
+        className="w-full"
+        value={openAccordions}
+        onValueChange={setOpenAccordions}
+      >
+        <div className="mb-2">
+          <AccordionItem value={"item-1"}>
+            <AccordionTrigger>Hint: </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-4 text-balance">
+              {questions[currentQuestionIndex].hint}
+            </AccordionContent>
+          </AccordionItem>
+        </div>
+      </Accordion>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-package com.aardapeker.app;
+package com.aardapeker.app.service;
 
 import com.google.cloud.texttospeech.v1.*;
 import org.springframework.stereotype.Service;

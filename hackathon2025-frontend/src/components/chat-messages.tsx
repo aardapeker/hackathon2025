@@ -1,4 +1,4 @@
-import { Bot, User, Volume2 } from "lucide-react"
+import { AlertCircleIcon, Bot, CheckCircle2Icon, User, Volume2 } from "lucide-react"
 import { Button } from "./ui/button"
 import { Form } from "react-router-dom"
 import type { Message, Output } from "@/types"
@@ -6,7 +6,8 @@ import ReactMarkdown from "react-markdown"
 import { errorLabels } from "@/constants/error_labels"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
 import { diffChars } from "diff"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
 
 type MessageProps = {
   messages: Message[]
@@ -24,7 +25,6 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
     let fixedInput = ""
 
     if (message.role === "assistant") {
-      // Find the previous user message
       for (let i = idx - 1;i >= 0;i--) {
         if (messages[i].role === "user") {
           originalInput = messages[i].content as string
@@ -39,7 +39,6 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
       diff = diffChars(originalInput, fixedInput)
     }
 
-
     return <div
       key={message.id}
       className={`group px-4 py-4 my-3  ${message.role === "assistant"
@@ -51,11 +50,8 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
         marginRight: message.role === "assistant" ? "auto" : "0",
       }}
     >
-
       {/* Avatar */}
-
       {message.role === "assistant" ? (
-
         <div className="flex gap-3">
           <div className="flex-shrink-0">
             <div className="w-8 h-8 rounded-full bg-success text-success-foreground flex items-center justify-center">
@@ -73,7 +69,6 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                     {(message.content as Output).chatOutput}
                   </ReactMarkdown>
                 </span>
-
                 <Button
                   type="button"
                   className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:disabled:text-muted-foreground transition-colors duration-200 disabled:cursor-not-allowed"
@@ -84,52 +79,55 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                 </Button>
               </div>
               {/* Corrected Input */}
-              <TooltipProvider>
-                <div>
-                  <span className="font-semibold text-success">Corrected Input:</span>
-                  {diff.map((part, idx) => {
-                    // green for additions, red for deletions
-                    const color = part.added ? "var(--success)" :
-                      part.removed ? "var(--destructive)" :
-                        undefined
-
-
-                    const style: React.CSSProperties = {
-                      ...(color ? { color } : {}),
-                      ...(part.removed ? { textDecoration: "line-through" } : {}),
-                    }
-
-                    if (part.added) {
+              {message.content.fixedInput && <Alert className="my-2">
+                <AlertCircleIcon />
+                <AlertTitle>I found some grammar mistakes in your message.</AlertTitle>
+                <AlertDescription>
+                  <div className="font-light text-lg text-foreground">
+                    {diff.map((part, idx) => {
+                      // green for additions, red for deletions
+                      const color = part.added ? "var(--success)" :
+                        part.removed ? "var(--destructive)" :
+                          undefined
+                      const style: React.CSSProperties = {
+                        ...(color ? { color } : {}),
+                        ...(part.removed ? { textDecoration: "line-through" } : {}),
+                      }
+                      if (part.added) {
+                        return (
+                          <Tooltip key={idx}>
+                            <TooltipTrigger asChild>
+                              <span style={style}>{part.value}</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              Added
+                            </TooltipContent>
+                          </Tooltip>
+                        )
+                      }
                       return (
-                        <Tooltip key={idx}>
-                          <TooltipTrigger asChild>
-                            <span style={style}>{part.value}</span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Added
-                          </TooltipContent>
-                        </Tooltip>
+                        <span key={idx} style={style}>
+                          {part.value}
+                        </span>
                       )
-                    }
+                    })}</div>
+                </AlertDescription>
+              </Alert>}
+              {message.content.fixedInput && <Alert className="my-2">
+                <CheckCircle2Icon />
+                <AlertTitle>Corrected Input: </AlertTitle>
+                <AlertDescription>
+                  {(message.content as Output).fixedInput}
+                </AlertDescription>
+              </Alert>}
 
-                    return (
-                      <span key={idx} style={style}>
-                        {part.value}
-                      </span>
-                    )
-                  })}
-                  <span className="ml-2">{(message.content as Output).fixedInput}</span>
-                </div>
-              </TooltipProvider>
               {/* Fix Steps */}
-              <div>
+              {message.content.fixSteps.length !== 0 && <div>
                 <span className="font-semibold text-warning">Fix Steps:</span>
                 <span className="ml-2">
-
                   {(message.content as Output).fixSteps.map((step, idx) => {
                     const key = step.type
                     const md = step.explanation
-
                     return (
                       <Accordion
                         key={idx}
@@ -150,9 +148,9 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                       </Accordion>
                     )
                   })}
-
                 </span>
               </div>
+              }
 
               {/* Next Chat Messages */}
               <div>
@@ -169,7 +167,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                       <Button
                         key={idx}
                         type="button"
-                        className="px-3 py-1 rounded-xl bg-muted text-muted-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm transition-colors duration-200"
+                        className="h-fit max-w-fit px-3 py-1 rounded-xl bg-muted text-muted-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm whitespace-normal transition-colors duration-200"
                         tabIndex={-1}
                         onClick={() => onClick(msg.topic)}
                       >
@@ -179,7 +177,6 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                   </div>
                 </Form>
               </div>
-
             </div>
           </div>
         </div>
@@ -196,7 +193,6 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
               <User className="w-4 h-4" />
             </div>
           </div>
-
         </div>
       )}
     </div>

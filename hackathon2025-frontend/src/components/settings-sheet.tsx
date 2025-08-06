@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+
 import { Settings } from "lucide-react"
 import { useEffect, useState } from "react"
 import getAvailableVoices from "@/functions/get_available_voices"
@@ -28,7 +29,7 @@ import { allLangCodes, languageCodeMap } from "@/constants/language_codes"
 
 export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
   const savedStr = localStorage.getItem("settings")
-  const saved: Voice = savedStr ? JSON.parse(savedStr) : { languageCode: "en-US", voiceName: "en-US-Wavenet-D", voiceGender: "MALE" }
+  const saved: Voice = savedStr ? JSON.parse(savedStr) : { languageCode: "en-US", voiceName: "en-US-Chirp3-HD-Sadachbia", voiceGender: "MALE" }
 
   const [voices, setVoices] = useState<VoiceBackend[]>([])
   const [languageCode, setLanguageCode] = useState(saved.languageCode)
@@ -64,9 +65,9 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
+          <SheetTitle>Change Settings</SheetTitle>
           <SheetDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            Make changes to your settings here. Click save when you&apos;re done.
           </SheetDescription>
         </SheetHeader>
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
@@ -87,7 +88,6 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
             </SelectContent>
           </Select>
 
-
           <Select onValueChange={(value) => setVoiceGender(value)} defaultValue={voiceGender}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Voice Gender" />
@@ -97,7 +97,6 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
                 <SelectLabel>Voice Gender</SelectLabel>
                 <SelectItem value="MALE">Male</SelectItem>
                 <SelectItem value="FEMALE">Female</SelectItem>
-
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -115,11 +114,9 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
                     {displayName}
                   </SelectItem>
                 })}
-
               </SelectGroup>
             </SelectContent>
           </Select>
-
         </div>
         <SheetFooter>
           <SheetClose asChild>

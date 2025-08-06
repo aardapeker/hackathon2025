@@ -32,20 +32,43 @@ export type QuizOutput = {
 }
 
 export type Question = {
+  category: ErrorKey
   questionText: string
   options: string[]
   correctAnswer: string
-  explanation: string
+  explanation: Explanation
   hint: string
-  feedback: Feedback
 }
 
-export type Feedback = {
-  // optionFeedback: { [option: string]: string } // to avoid extra nesting
+export type Explanation = {
   [option: string]: string
 }
 
 export type Mode = "CHAT" | "QUIZ"
+
+export type Summary = {
+  improvements: string
+  weaknesses: string
+  personalInfo: string
+}
+
+export type Category = {
+  correctRate: number
+  correctAnswers: number
+  totalQuestions: number
+  summary: string
+}
+
+export type QuizDetections = {
+  [K in ErrorKey]?: Category
+}
+
+export type Profile = {
+  name: string
+  bio: string
+  summary: Summary
+  quizDetections: QuizDetections
+}
 
 export type Output = {
   originalInput: string
@@ -53,6 +76,7 @@ export type Output = {
   chatOutput: string
   fixSteps: FixStep[]
   nextChatMessages: NextChatMessage[]
+  profile: Profile
 }
 
 export type PracticeResponse = {

@@ -10,3 +10,34 @@ export async function rootLoader({ request }: LoaderFunctionArgs) {
 
   return data
 }
+
+export async function chatUILoader({ request }: LoaderFunctionArgs) {
+  console.log(request)
+
+  console.log("trying to fetch user profile from localstorage")
+  let userProfile = localStorage.getItem("profile")
+
+  if (!userProfile) {
+    console.log(
+      "there is no user profile detected, trying to save initial profile",
+    )
+
+    const initialProfile = {
+      name: "",
+      bio: "",
+      summary: {
+        improvements: "",
+        weaknesses: "",
+        personalInfo: "",
+      },
+      quizDetections: {},
+    }
+
+    localStorage.setItem("profile", JSON.stringify(initialProfile))
+    console.log("initial profile saved")
+    userProfile = localStorage.getItem("profile")
+    console.log("User Profile is Initialized:", userProfile)
+  }
+
+  return userProfile
+}

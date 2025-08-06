@@ -7,5 +7,6 @@ public record Output(
         String fixedInput,
         List<FixStep> fixSteps,
         String chatOutput,
-        List<NextChatMessage> nextChatMessages
+        List<NextChatMessage> nextChatMessages,
+        Profile profile
 ) {}

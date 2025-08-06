@@ -1,5 +1,7 @@
 package com.aardapeker.app.dto;
 
-public record Question(String questionText, String[] options, String correctAnswer, String explanation, String hint, Feedback feedback) {
+import java.util.Map;
+
+public record Question(String category, String questionText, String[] options, String correctAnswer, Map<String, String> explanation, String hint) {
 
 }

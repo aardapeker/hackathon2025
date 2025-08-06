@@ -3,7 +3,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import LoadingPage from "./routes/loading-page"
 import RootPage from "./routes/root-page"
 import ErrorPage from "./routes/error-page"
-import { rootLoader } from "./functions/loaders"
+import { chatUILoader, rootLoader } from "./functions/loaders"
 import { chatAction } from "./functions/actions"
 import ChatUI from "./components/chat-ui"
 
@@ -18,7 +18,7 @@ function App() {
         errorElement={<ErrorPage />}
       >
         <Route errorElement={<ErrorPage />}>
-          <Route index element={<ChatUI />} action={chatAction} />
+          <Route index element={<ChatUI />} action={chatAction} loader={chatUILoader} />
         </Route>
       </Route>
     )
