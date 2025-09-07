@@ -1,5 +1,19 @@
-import { Button } from "@/components/ui/button"
+import type { Voice, VoiceBackend } from "@/types"
 
+import { useEffect, useState } from "react"
+
+import { Settings } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Sheet,
   SheetClose,
@@ -11,20 +25,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
-import { Settings } from "lucide-react"
-import { useEffect, useState } from "react"
 import getAvailableVoices from "@/functions/get_available_voices"
-import type { Voice, VoiceBackend } from "@/types"
 import { allLangCodes, languageCodeMap } from "@/constants/language_codes"
 
 export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {

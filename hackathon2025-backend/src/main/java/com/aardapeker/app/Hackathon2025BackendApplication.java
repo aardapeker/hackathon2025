@@ -15,12 +15,6 @@ public class Hackathon2025BackendApplication {
 
 	}
 
-	/**
-	 * Configures CORS to allow requests from the specified origin.
-	 * This is necessary for the frontend to communicate with the backend.
-	 *
-	 * @return a WebMvcConfigurer that configures CORS settings
-	 */
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {

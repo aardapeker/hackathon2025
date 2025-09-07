@@ -1,20 +1,20 @@
-import useSpeechRecognition from "@/hooks/use-speech-recognition"
-import { Mic, Square } from "lucide-react"
 import { useEffect } from "react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
-import { Button } from "./ui/button"
 
+import { Mic, Square } from "lucide-react"
+
+import { Button } from "./ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+
+import useSpeechRecognition from "@/hooks/use-speech-recognition"
 
 export function VoiceInput({ onResult }: { onResult: (transcript: string, isFinal: boolean) => void }) {
   const { transcript, isFinal, isListening, startListening, stopListening, hasRecognitionSupport } = useSpeechRecognition()
-
 
   useEffect(() => {
     if (transcript) {
       onResult(transcript, isFinal)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transcript, onResult])
+  }, [transcript, onResult, isFinal])
 
   return (
     <Tooltip>
@@ -37,6 +37,7 @@ export function VoiceInput({ onResult }: { onResult: (transcript: string, isFina
           </span>
         </Button>
       </TooltipTrigger>
+
       {!hasRecognitionSupport && (
         <TooltipContent>
           <p >

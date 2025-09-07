@@ -11,7 +11,6 @@ RUN npm install
 
 COPY . ./
 
-# .env is already copied by COPY . ./
 RUN npm run build
 
 # Run stage (use nginx to serve)

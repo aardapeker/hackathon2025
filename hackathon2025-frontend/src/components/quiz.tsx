@@ -1,12 +1,14 @@
-import { Button } from "./ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import { Label } from "./ui/label"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 import type { ErrorKey, Question } from "@/types"
+
 import { useRef, useState } from "react"
-import { Progress } from "./ui/progress"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
 import { Form, useSubmit } from "react-router-dom"
+
+import { Label } from "./ui/label"
+import { Button } from "./ui/button"
+import { Progress } from "./ui/progress"
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
 
 export type UserAnswer = {
   category: ErrorKey
@@ -59,6 +61,7 @@ function Quiz({ questions, onIsLoading }: { questions: Question[]; onIsLoading: 
                 Question {currentQuestionIndex + 1} of {questions.length}
               </CardTitle>
             </div>
+
             {/* Progress bar */}
             <div className="space-y-2">
               <Progress value={progressPercentage} className="w-full" />

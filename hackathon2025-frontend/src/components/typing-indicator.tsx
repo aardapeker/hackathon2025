@@ -10,12 +10,14 @@ function TypingIndicator() {
       }}
     >
       <div className="flex gap-3 items-start">
+
         {/* Avatar */}
         <div className="flex-shrink-0">
           <div className="w-8 h-8 rounded-full bg-success text-success-foreground flex items-center justify-center">
             <Bot className="w-4 h-4" />
           </div>
         </div>
+
         {/* Typing Dots */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-1 py-2">

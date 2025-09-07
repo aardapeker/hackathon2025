@@ -1,13 +1,15 @@
-import { useActionData, useLoaderData } from "react-router-dom"
-import { useCallback, useEffect, useRef, useState } from "react"
 import type { Message, PracticeResponse, Profile, Voice } from "@/types"
-import { nanoid } from 'nanoid'
-import playSpeech from "@/functions/play_speech"
 
-import TypingIndicator from "./typing-indicator"
-import ChatMessages from "./chat-messages"
-import InputForm from "./input-form"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useActionData, useLoaderData } from "react-router-dom"
+
+import { nanoid } from 'nanoid'
+
 import Quiz from "./quiz"
+import InputForm from "./input-form"
+import ChatMessages from "./chat-messages"
+import playSpeech from "@/functions/play_speech"
+import TypingIndicator from "./typing-indicator"
 
 export default function ChatUI() {
   const savedStr = localStorage.getItem("settings")
@@ -190,33 +192,32 @@ export default function ChatUI() {
         <>
           {/* Split Screen */}
           <div className="flex flex-1 overflow-hidden">
+
             {/* Left Panel */}
             <div className="w-1/3 border-r border-border flex flex-col">
               <div className="flex-1 flex items-center justify-center">
                 <Quiz questions={actionData.quizOutput.questions} onIsLoading={handleLoading} />
               </div>
             </div>
+
             {/* Right Panel */}
             <div className="w-2/3 flex flex-col">
+
               {/* Messages Container */}
               <div className={`flex-1 custom-scrollbar ${messages.length !== 0 ? "overflow-y-scroll" : ""}`}>
                 <div className={` max-w-4xl px-3 mx-auto ${messages.length === 0 ? "flex flex-col justify-end items-center h-full" : ""}`}  >
-                  {messages.length !== 0 ? (
-                    <ChatMessages messages={messages} onSubmit={handleSubmit} onClick={handleClick} onSpeak={handleSpeak} suggestionFormRef={suggestionFormRef} suggestionInputRef={suggestionInputRef} />
-                  ) : (
-                    <div className="rounded-lg p-4">
-                      <span className="text-muted-foreground text-3xl font-semibold">
-                        Hello! What subject would you like to discuss?
-                      </span>
-                    </div>
-                  )}
-
+                  <ChatMessages
+                    messages={messages}
+                    onSubmit={handleSubmit}
+                    onClick={handleClick}
+                    onSpeak={handleSpeak}
+                    suggestionFormRef={suggestionFormRef}
+                    suggestionInputRef={suggestionInputRef}
+                  />
                   {/* Scroll anchor */}
                   <div ref={messagesEndRef} />
                 </div>
               </div>
-
-
             </div>
           </div>
         </>

@@ -1,13 +1,17 @@
-import { AlertCircleIcon, Bot, CheckCircle2Icon, User, Volume2 } from "lucide-react"
-import { Button } from "./ui/button"
-import { Form } from "react-router-dom"
 import type { Message, Output } from "@/types"
-import ReactMarkdown from "react-markdown"
-import { errorLabels } from "@/constants/error_labels"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
+
 import { diffChars } from "diff"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { Form } from "react-router-dom"
+import ReactMarkdown from "react-markdown"
+
+import { AlertCircleIcon, Bot, CheckCircle2Icon, User, Volume2 } from "lucide-react"
+
+import { Button } from "./ui/button"
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
+
+import { errorLabels } from "@/constants/error_labels"
 
 type MessageProps = {
   messages: Message[]
@@ -58,9 +62,11 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
               <Bot className="w-4 h-4" />
             </div>
           </div>
+
           {/* Message Content */}
           <div className="flex-1 min-w-0">
             <div className="whitespace-pre-wrap leading-relaxed text-foreground">
+
               {/* Chat Output */}
               <div>
                 <span className="font-semibold text-primary">Chat Output:</span>
@@ -78,6 +84,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                   <Volume2 />
                 </Button>
               </div>
+
               {/* Corrected Input */}
               {message.content.fixedInput && <Alert className="my-2">
                 <AlertCircleIcon />
@@ -85,7 +92,6 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                 <AlertDescription>
                   <div className="font-light text-lg text-foreground">
                     {diff.map((part, idx) => {
-                      // green for additions, red for deletions
                       const color = part.added ? "var(--success)" :
                         part.removed ? "var(--destructive)" :
                           undefined
@@ -182,6 +188,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
         </div>
       ) : (
         <div className="flex gap-3">
+
           {/* Message Content */}
           <div className="flex-1 min-w-0">
             <div className="whitespace-pre-wrap leading-relaxed text-foreground">
@@ -196,10 +203,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
         </div>
       )}
     </div>
-
   })
-
 }
-
 
 export default ChatMessages

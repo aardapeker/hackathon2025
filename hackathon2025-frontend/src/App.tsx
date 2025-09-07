@@ -1,11 +1,13 @@
-import './App.css'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
-import LoadingPage from "./routes/loading-page"
+
+import ChatUI from "./components/chat-ui"
+
+import './App.css'
 import RootPage from "./routes/root-page"
 import ErrorPage from "./routes/error-page"
-import { chatUILoader, rootLoader } from "./functions/loaders"
+import LoadingPage from "./routes/loading-page"
 import { chatAction } from "./functions/actions"
-import ChatUI from "./components/chat-ui"
+import { chatUILoader, rootLoader } from "./functions/loaders"
 
 function App() {
   const router = createBrowserRouter(
@@ -17,9 +19,7 @@ function App() {
         loader={rootLoader}
         errorElement={<ErrorPage />}
       >
-        <Route errorElement={<ErrorPage />}>
-          <Route index element={<ChatUI />} action={chatAction} loader={chatUILoader} />
-        </Route>
+        <Route index element={<ChatUI />} action={chatAction} loader={chatUILoader} />
       </Route>
     )
   )

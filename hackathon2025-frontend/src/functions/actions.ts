@@ -1,4 +1,5 @@
 import type { Profile } from "@/types"
+
 import { postUserInput } from "./post_user_input"
 
 export async function chatAction({ request }: { request: Request }) {
