@@ -22,7 +22,7 @@ public class Hackathon2025BackendApplication {
 			public void addCorsMappings(@NonNull CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedOrigins("http://localhost", "http://localhost:5173", "https://btk-hackathon2025.netlify.app",
-								"hackathon2025.aardapeker.com")
+								"https://hackathon2025.aardapeker.com/")
 						.allowedMethods("*")
 						.allowedHeaders("*")
 						.allowCredentials(true);
