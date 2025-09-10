@@ -68,6 +68,7 @@ export type Profile = {
   bio: string
   summary: Summary
   quizDetections: QuizDetections
+  lastMessages: string[]
 }
 
 export type Output = {

@@ -2,12 +2,13 @@ package com.aardapeker.app.prompts;
 
 import com.aardapeker.app.dto.QuizCategoryStats;
 
+import java.util.List;
 import java.util.Map;
 
 public class SystemPrompts {
 
   public static String getStructuredPromptWithProfile(String name, String bio,
-      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizDetections) {
+      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizDetections, List<String> lastMessages) {
     return PRACTICE_STRUCTURED_PROMPT
 
         .replace("%name", name != null ? name : "")
@@ -18,7 +19,8 @@ public class SystemPrompts {
         .replace("%quizDetections", quizDetections != null ? quizDetections.toString() : "{}")
         .replace("%errorReferenceTable", ERROR_REFERENCE_TABLE)
         .replace("%outputBlockReference", OUTPUT_BLOCK_REFERENCE)
-        .replace("%profileBlockExample", PROFILE_BLOCK_EXAMPLE);
+        .replace("%profileBlockExample", PROFILE_BLOCK_EXAMPLE)
+        .replace("%lastMessages", lastMessages != null ? lastMessages.toString() : "[]");
   }
 
   public static final String PRACTICE_STRUCTURED_PROMPT = """
@@ -41,9 +43,12 @@ public class SystemPrompts {
               "personalInfo": "%personalInfo"
             },
             "quizDetections": %quizDetections
+            "lastMessages": %lastMessages
          }
 
       - If the user profile information is empty, that means the user is new and you should create a new profile with the provided data.
+      - Don't remove existing lastMessages, just add the latest message to the array, keeping only the most recent 10 messages.
+      - If there are already 10 messages, remove the oldest one before adding the new message.
 
       ### 📦 Variables
 
@@ -322,7 +327,8 @@ public class SystemPrompts {
                 "summary": "[Friendly summary of the user's performance]"
               }
               ... all other category types like this ...
-            }
+            },
+            "lastMessages": ["[Last message 1]", "[Last message 2]", "..."]
           }
         }
       """;
@@ -349,7 +355,12 @@ public class SystemPrompts {
               "totalQuestions": 10,
               "summary": "Solid grasp of articles. Occasional confusion between 'a' and 'an'."
             }
-          }
+          },
+          "lastMessages": [
+            "I don't has any pet but i want a dog",
+            "Yesterday I go to park and see a cat",
+            "She have a car and she drive it fast"
+          ]
         }
       """;
 }

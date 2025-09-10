@@ -38,6 +38,28 @@ public class ChatController {
     }
 
     @PostMapping("/practice/structured")
+    public PracticeResponse structuredResponse(@RequestBody Input input) {
+        String customPrompt = SystemPrompts.getStructuredPromptWithProfile(
+                input.profile().name(),
+                input.profile().bio(),
+                input.profile().summary().improvements(),
+                input.profile().summary().weaknesses(),
+                input.profile().summary().personalInfo(),
+                input.profile().quizDetections(),
+                input.profile().lastMessages());
+
+        System.out.println("Custom Prompt: " + customPrompt);
+
+        return chatClient.prompt()
+                .user(input.message())
+                .system(customPrompt)
+                .call()
+                .entity(PracticeResponse.class);
+    }
+
+
+
+    @PostMapping("/practice/structured")
     public PracticeResponse practiceStreamStructured(@RequestBody Input input) {
 
         String customPrompt = SystemPrompts.getStructuredPromptWithProfile(

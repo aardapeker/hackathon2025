@@ -6,8 +6,8 @@ import './App.css'
 import RootPage from "./routes/root-page"
 import ErrorPage from "./routes/error-page"
 import LoadingPage from "./routes/loading-page"
-import { chatAction } from "./functions/actions"
-import { chatUILoader, rootLoader } from "./functions/loaders"
+import { chatAction } from "./functions/_actions"
+import { chatUILoader, rootLoader } from "./functions/_loaders"
 
 function App() {
   const router = createBrowserRouter(

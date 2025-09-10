@@ -20,6 +20,7 @@ export async function chatAction({ request }: { request: Request }) {
           personalInfo: "",
         },
         quizDetections: {},
+        lastMessages: [],
       }
     }
 

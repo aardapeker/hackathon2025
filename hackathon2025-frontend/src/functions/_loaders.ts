@@ -32,6 +32,7 @@ export async function chatUILoader({ request }: LoaderFunctionArgs) {
         personalInfo: "",
       },
       quizDetections: {},
+      lastMessages: [],
     }
 
     localStorage.setItem("profile", JSON.stringify(initialProfile))
