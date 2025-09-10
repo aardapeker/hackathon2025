@@ -23,12 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1")
 public class ChatController {
     private final ChatClient chatClient;
-    private final ChatMemory chatMemory;
     private final TTSService ttsService;
 
-    public ChatController(ChatClient.Builder builder, ChatMemory chatMemory, TTSService ttsService) {
+    public ChatController(ChatClient.Builder builder, TTSService ttsService) {
         this.chatClient = builder.build();
-        this.chatMemory = chatMemory;
         this.ttsService = ttsService;
     }
 
@@ -52,29 +50,6 @@ public class ChatController {
 
         return chatClient.prompt()
                 .user(input.message())
-                .system(customPrompt)
-                .call()
-                .entity(PracticeResponse.class);
-    }
-
-
-
-    @PostMapping("/practice/structured")
-    public PracticeResponse practiceStreamStructured(@RequestBody Input input) {
-
-        String customPrompt = SystemPrompts.getStructuredPromptWithProfile(
-                input.profile().name(),
-                input.profile().bio(),
-                input.profile().summary().improvements(),
-                input.profile().summary().weaknesses(),
-                input.profile().summary().personalInfo(),
-                input.profile().quizDetections());
-
-        System.out.println("Custom Prompt: " + customPrompt);
-
-        return chatClient.prompt()
-                .user(input.message())
-                .advisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .system(customPrompt)
                 .call()
                 .entity(PracticeResponse.class);
