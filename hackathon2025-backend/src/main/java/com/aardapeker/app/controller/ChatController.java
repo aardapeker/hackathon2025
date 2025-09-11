@@ -35,6 +35,9 @@ public class ChatController {
 
     @PostMapping("/practice/structured")
     public PracticeResponse structuredResponse(@RequestBody Input input) {
+
+        System.out.println("Received Input: " + input);
+
         String customPrompt = SystemPrompts.getStructuredPromptWithProfile(
                 input.profile().name(),
                 input.profile().bio(),

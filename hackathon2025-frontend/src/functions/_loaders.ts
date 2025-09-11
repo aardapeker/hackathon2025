@@ -1,6 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router-dom"
 
 import { testingEndpoint } from "./testing_endpoint"
+import { initialProfile } from "@/constants/initial_profile"
 
 export async function rootLoader({ request }: LoaderFunctionArgs) {
   console.log(request)
@@ -22,18 +23,6 @@ export async function chatUILoader({ request }: LoaderFunctionArgs) {
     console.log(
       "there is no user profile detected, trying to save initial profile",
     )
-
-    const initialProfile = {
-      name: "",
-      bio: "",
-      summary: {
-        improvements: "",
-        weaknesses: "",
-        personalInfo: "",
-      },
-      quizDetections: {},
-      lastMessages: [],
-    }
 
     localStorage.setItem("profile", JSON.stringify(initialProfile))
     console.log("initial profile saved")

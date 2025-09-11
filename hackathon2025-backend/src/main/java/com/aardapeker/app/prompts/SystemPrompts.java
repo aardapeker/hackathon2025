@@ -2,13 +2,12 @@ package com.aardapeker.app.prompts;
 
 import com.aardapeker.app.dto.QuizCategoryStats;
 
-import java.util.List;
 import java.util.Map;
 
 public class SystemPrompts {
 
   public static String getStructuredPromptWithProfile(String name, String bio,
-      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizDetections, List<String> lastMessages) {
+      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizDetections, Map <String, String> lastMessages) {
     return PRACTICE_STRUCTURED_PROMPT
 
         .replace("%name", name != null ? name : "")
@@ -47,8 +46,7 @@ public class SystemPrompts {
          }
 
       - If the user profile information is empty, that means the user is new and you should create a new profile with the provided data.
-      - Don't remove existing lastMessages, just add the latest message to the array, keeping only the most recent 10 messages.
-      - If there are already 10 messages, remove the oldest one before adding the new message.
+      - Do not delete existing data on lastMessages, just add the new message to the list. Keep only the last 10 messages. If there are more than 10, remove the oldest ones.
 
       ### 📦 Variables
 
@@ -59,7 +57,7 @@ public class SystemPrompts {
          %profileBlockExample
 
       ! IMPORTANT: Always replace the variables `outputBlockReferenceVariable` and `profileBlockExample` with the full structure defined in the variable section above. Do not generate it again. Use the definition as-is.
-
+      
       ---
 
       - This is error reference table for the `fixSteps`:
@@ -99,6 +97,7 @@ public class SystemPrompts {
       ---
 
       If the user want to call them different, change the names to whatever they want.
+      DO NOT delete lastMessages, just add the new message to the list. Keep only the last 10 messages. If there are more than 10, remove the oldest ones.
       Bio Information Updates:
         - Monitor for explicit bio changes (e.g., "Actually, I'm a teacher" or "I should mention I'm from Canada")
         - Update the bio field when users provide new information about themselves
@@ -265,6 +264,7 @@ public class SystemPrompts {
       Never wrap your response in triple backticks like ```json or ``` at all.
       Respond with raw JSON only. No markdown code blocks.
       THE 'questions' array should contain 5 questions.
+      DO NOT delete lastMessages, just add the new message to the list. Keep only the last 10 messages. If there are more than 10, remove the oldest ones.
 
       Always keep your tone friendly, helpful, and encouraging. Be like a supportive English buddy who really cares. 😊
       """;
@@ -328,7 +328,12 @@ public class SystemPrompts {
               }
               ... all other category types like this ...
             },
-            "lastMessages": ["[Last message 1]", "[Last message 2]", "..."]
+            "lastMessages": {
+                "1": "[First message]",
+                "2": "[Second message]",
+                "3": "[Third message]"
+                ... up to 10 messages ...
+            }
           }
         }
       """;
@@ -356,11 +361,11 @@ public class SystemPrompts {
               "summary": "Solid grasp of articles. Occasional confusion between 'a' and 'an'."
             }
           },
-          "lastMessages": [
-            "I don't has any pet but i want a dog",
-            "Yesterday I go to park and see a cat",
-            "She have a car and she drive it fast"
-          ]
+          "lastMessages": {
+            "1": "I dont has any pet but i want a dog",
+            "2": "Yesterday I go to park and see a cat",
+            "3": "She have a car and she drive it fast"
+          }
         }
       """;
 }
