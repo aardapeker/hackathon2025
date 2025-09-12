@@ -68,7 +68,12 @@ export type Profile = {
   bio: string
   summary: Summary
   quizDetections: QuizDetections
-  lastMessages: { [key: string]: string }
+  lastMessages: LastMessage[]
+}
+
+export type LastMessage = {
+  user: string
+  chatbot: string
 }
 
 export type Output = {

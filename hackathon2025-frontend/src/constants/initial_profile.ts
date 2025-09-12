@@ -118,5 +118,5 @@ export const initialProfile: Profile = {
       summary: "",
     },
   },
-  lastMessages: {},
+  lastMessages: [],
 }

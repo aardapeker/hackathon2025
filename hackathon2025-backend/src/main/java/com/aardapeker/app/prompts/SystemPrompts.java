@@ -1,13 +1,16 @@
 package com.aardapeker.app.prompts;
 
+import com.aardapeker.app.dto.LastMessage;
 import com.aardapeker.app.dto.QuizCategoryStats;
 
+import java.util.List;
 import java.util.Map;
 
 public class SystemPrompts {
 
   public static String getStructuredPromptWithProfile(String name, String bio,
-      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizDetections, Map <String, String> lastMessages) {
+      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizDetections,
+      List<LastMessage> lastMessages) {
     return PRACTICE_STRUCTURED_PROMPT
 
         .replace("%name", name != null ? name : "")
@@ -46,8 +49,9 @@ public class SystemPrompts {
          }
 
       - If the user profile information is empty, that means the user is new and you should create a new profile with the provided data.
-      - Do not delete existing data on lastMessages, just add the new message to the list. Keep only the last 10 messages. If there are more than 10, remove the oldest ones.
-
+      - If lastMessages has fewer than 10 items, add the new message.
+      - If it has 10, remove the oldest (first) and add the new one at the end.
+      
       ### 📦 Variables
 
       - `outputBlockReferenceVariable`: Refers to the following JSON structure:
@@ -57,7 +61,7 @@ public class SystemPrompts {
          %profileBlockExample
 
       ! IMPORTANT: Always replace the variables `outputBlockReferenceVariable` and `profileBlockExample` with the full structure defined in the variable section above. Do not generate it again. Use the definition as-is.
-      
+
       ---
 
       - This is error reference table for the `fixSteps`:
@@ -328,12 +332,17 @@ public class SystemPrompts {
               }
               ... all other category types like this ...
             },
-            "lastMessages": {
-                "1": "[First message]",
-                "2": "[Second message]",
-                "3": "[Third message]"
+            "lastMessages": [
+                {
+                    "user": "[First message]",
+                    "chatbot": "[Chatbot's response to the first message]"
+                },
+                {
+                    "user": "[Second message]",
+                    "chatbot": "[Chatbot's response to the second message]"
+                },
                 ... up to 10 messages ...
-            }
+            ]
           }
         }
       """;
@@ -361,11 +370,20 @@ public class SystemPrompts {
               "summary": "Solid grasp of articles. Occasional confusion between 'a' and 'an'."
             }
           },
-          "lastMessages": {
-            "1": "I dont has any pet but i want a dog",
-            "2": "Yesterday I go to park and see a cat",
-            "3": "She have a car and she drive it fast"
-          }
+          "lastMessages": [
+            {
+                "user": "I dont has any pet but i want a dog",
+                "chatbot": "Dogs are the best! 🐶 What kind of dog would you love to have?"
+            },
+            {
+                "user": "I have a dog named Max. He is very playful",
+                "chatbot": "That's wonderful! 🐕 What breed is Max, and how old is he?"
+            },
+            {
+                "user": "Max is a Golden Retriever and he is 3 years old",
+                "chatbot": "Golden Retrievers are such friendly dogs! 🥰 What do you and Max like to do together?"
+            }
+          ]
         }
       """;
 }
