@@ -14,4 +14,10 @@ export default async function playSpeech(
   const base64Audio = await response.text()
   const audio = new Audio(`data:audio/mp3;base64,${base64Audio}`)
   audio.play()
+
+  return new Promise<void>((resolve) => {
+    audio.addEventListener("ended", () => {
+      resolve()
+    })
+  })
 }

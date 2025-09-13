@@ -1,4 +1,4 @@
-import type { Message, PracticeResponse, Profile, Voice } from "@/types"
+import type { Message, PracticeResponse, UserData, Voice } from "@/types"
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useActionData, useLoaderData } from "react-router-dom"
@@ -21,13 +21,14 @@ export default function ChatUI() {
   const [inputValue, setInputValue] = useState("")
   const [settingsData, setSettingsData] = useState(saved)
   const [isSplitScreen, setIsSplitScreen] = useState(false)
+  const [isSpeaking, setIsSpeaking] = useState(false)
 
   const suggestionFormRef = useRef<HTMLFormElement>(null)
   const suggestionInputRef = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const userProfile = JSON.parse(useLoaderData()) as Profile
+  const userData = JSON.parse(useLoaderData()) as UserData
   const actionData = useActionData() as PracticeResponse
 
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function ChatUI() {
             "fixedInput": actionData.output.fixedInput,
             "fixSteps": actionData.output.fixSteps,
             "nextChatMessages": actionData.output.nextChatMessages,
-            "profile": actionData.output.profile
+            "userData": actionData.output.userData
           },
         },
       ])
@@ -120,9 +121,11 @@ export default function ChatUI() {
     setHasInput(false)
   }
 
-  const handleSpeak = (text: string) => {
+  const handleSpeak = async (text: string) => {
+    setIsSpeaking(true)
     console.log(settingsData, "from handle Speak")
-    playSpeech(text, settingsData.voiceName, settingsData.voiceGender, settingsData.languageCode)
+    await playSpeech(text, settingsData.voiceName, settingsData.voiceGender, settingsData.languageCode)
+    setIsSpeaking(false)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -154,11 +157,11 @@ export default function ChatUI() {
           <div className={`flex-1 custom-scrollbar ${messages.length !== 0 ? "overflow-y-scroll" : ""}`}>
             <div className={` max-w-4xl px-3 mx-auto ${messages.length === 0 ? "flex flex-col justify-end items-center h-full" : ""}`}  >
               {messages.length !== 0 ? (
-                <ChatMessages messages={messages} onSubmit={handleSubmit} onClick={handleClick} onSpeak={handleSpeak} suggestionFormRef={suggestionFormRef} suggestionInputRef={suggestionInputRef} />
+                <ChatMessages messages={messages} onSubmit={handleSubmit} onClick={handleClick} onSpeak={handleSpeak} isSpeaking={isSpeaking} suggestionFormRef={suggestionFormRef} suggestionInputRef={suggestionInputRef} />
               ) : (
                 <div className="rounded-lg p-4">
                   <span className="text-muted-foreground text-3xl font-semibold">
-                    {userProfile.name !== "" ? `Hello ${userProfile.name}! 👋 What subject would you like to discuss?` : "Hello! What subject would you like to discuss?"}
+                    {userData.profile.name !== "" ? `Hello ${userData.profile.name}! 👋 What subject would you like to discuss?` : "Hello! What subject would you like to discuss?"}
 
                   </span>
                 </div>
@@ -211,6 +214,7 @@ export default function ChatUI() {
                     onSubmit={handleSubmit}
                     onClick={handleClick}
                     onSpeak={handleSpeak}
+                    isSpeaking={isSpeaking}
                     suggestionFormRef={suggestionFormRef}
                     suggestionInputRef={suggestionInputRef}
                   />

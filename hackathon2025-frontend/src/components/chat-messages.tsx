@@ -18,11 +18,12 @@ type MessageProps = {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   onClick: (msg: string) => void
   onSpeak: (text: string) => void
+  isSpeaking: boolean
   suggestionFormRef: React.RefObject<HTMLFormElement | null>
   suggestionInputRef: React.RefObject<HTMLInputElement | null>
 }
 
-function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef, suggestionInputRef }: MessageProps) {
+function ChatMessages({ messages, onSubmit, onClick, onSpeak, isSpeaking, suggestionFormRef, suggestionInputRef }: MessageProps) {
 
   return messages.map((message, idx) => {
     let originalInput = ""
@@ -78,7 +79,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, suggestionFormRef,
                 <Button
                   type="button"
                   className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:disabled:text-muted-foreground transition-colors duration-200 disabled:cursor-not-allowed"
-                  disabled={!(message.content as Output).chatOutput}
+                  disabled={!(message.content as Output).chatOutput || isSpeaking}
                   onClick={() => onSpeak((message.content as Output).chatOutput)}
                 >
                   <Volume2 />

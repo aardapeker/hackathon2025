@@ -8,5 +8,5 @@ public record Output(
         List<FixStep> fixSteps,
         String chatOutput,
         List<NextChatMessage> nextChatMessages,
-        Profile profile
+        UserData userData
 ) {}

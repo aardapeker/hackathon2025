@@ -39,13 +39,14 @@ public class ChatController {
         System.out.println("Received Input: " + input);
 
         String customPrompt = SystemPrompts.getStructuredPromptWithProfile(
+                input.message(),
                 input.profile().name(),
                 input.profile().bio(),
                 input.profile().summary().improvements(),
                 input.profile().summary().weaknesses(),
                 input.profile().summary().personalInfo(),
-                input.profile().quizDetections(),
-                input.profile().lastMessages());
+                input.quizResults(),
+                input.lastMessages());
 
         System.out.println("Custom Prompt: " + customPrompt);
 

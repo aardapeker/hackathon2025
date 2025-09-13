@@ -1,35 +1,52 @@
-import type { Profile } from "@/types"
+import type { UserData } from "@/types"
 
 import { postUserInput } from "./post_user_input"
-import { initialProfile } from "@/constants/initial_profile"
+import { initialUserData } from "@/constants/initial_profile"
 
 export async function chatAction({ request }: { request: Request }) {
   try {
-    let profile: Profile | undefined
+    const userDataStr = localStorage.getItem("userData")
+    console.log(userDataStr, "userDataStr")
 
-    const profileStr = localStorage.getItem("profile")
-    console.log(profileStr, "profileStr")
+    let userData
 
-    if (profileStr) {
-      profile = JSON.parse(profileStr) as Profile
-      console.log(profile)
+    if (userDataStr) {
+      userData = JSON.parse(userDataStr) as UserData
+      console.log(userData)
     } else {
-      profile = initialProfile
+      userData = initialUserData
     }
 
-    console.log(profile, "profile")
+    console.log(userData, "userData")
 
     const formData = await request.formData()
     const entries = Array.from(formData.entries())
     const [, val] = entries[0]
     const data = await postUserInput({
       message: val.toString(),
-      profile: profile,
+      profile: userData.profile,
+      quizResults: userData.quizResults,
+      lastMessages: userData.lastMessages,
     })
 
     console.log(data, "data")
 
-    localStorage.setItem("profile", JSON.stringify(data.output.profile))
+    const savedData = {
+      ...data.output.userData,
+      lastMessages: [
+        ...userData.lastMessages,
+        {
+          user: data.output.originalInput,
+          chatBot: data.output.chatOutput,
+        },
+      ],
+    }
+
+    if (savedData.lastMessages.length > 10) {
+      savedData.lastMessages = savedData.lastMessages.slice(-10)
+    }
+
+    localStorage.setItem("userData", JSON.stringify(savedData))
 
     return new Response(JSON.stringify(data), {
       status: 200,

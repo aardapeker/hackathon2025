@@ -59,7 +59,7 @@ export type Category = {
   summary: string
 }
 
-export type QuizDetections = {
+export type QuizResults = {
   [K in ErrorKey]?: Category
 }
 
@@ -67,7 +67,11 @@ export type Profile = {
   name: string
   bio: string
   summary: Summary
-  quizDetections: QuizDetections
+}
+
+export type UserData = {
+  profile: Profile
+  quizResults: QuizResults
   lastMessages: LastMessage[]
 }
 
@@ -79,10 +83,10 @@ export type LastMessage = {
 export type Output = {
   originalInput: string
   fixedInput: string
-  chatOutput: string
   fixSteps: FixStep[]
+  chatOutput: string
   nextChatMessages: NextChatMessage[]
-  profile: Profile
+  userData: UserData
 }
 
 export type PracticeResponse = {

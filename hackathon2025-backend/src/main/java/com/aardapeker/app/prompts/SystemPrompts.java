@@ -8,20 +8,20 @@ import java.util.Map;
 
 public class SystemPrompts {
 
-  public static String getStructuredPromptWithProfile(String name, String bio,
-      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizDetections,
+  public static String getStructuredPromptWithProfile(String message, String name, String bio,
+      String improvements, String weaknesses, String personalInfo, Map<String, QuizCategoryStats> quizResults,
       List<LastMessage> lastMessages) {
     return PRACTICE_STRUCTURED_PROMPT
-
+        .replace("%message", message != null ? message : "")
         .replace("%name", name != null ? name : "")
         .replace("%bio", bio != null ? bio : "")
         .replace("%improvements", improvements != null ? improvements : "")
         .replace("%weaknesses", weaknesses != null ? weaknesses : "")
         .replace("%personalInfo", personalInfo != null ? personalInfo : "")
-        .replace("%quizDetections", quizDetections != null ? quizDetections.toString() : "{}")
+        .replace("%quizResults", quizResults != null ? quizResults.toString() : "{}")
         .replace("%errorReferenceTable", ERROR_REFERENCE_TABLE)
         .replace("%outputBlockReference", OUTPUT_BLOCK_REFERENCE)
-        .replace("%profileBlockExample", PROFILE_BLOCK_EXAMPLE)
+        .replace("%userDataBlockExample", USER_DATA_BLOCK_EXAMPLE)
         .replace("%lastMessages", lastMessages != null ? lastMessages.toString() : "[]");
   }
 
@@ -36,7 +36,10 @@ public class SystemPrompts {
       5. If the user want you to make a quiz or a test, you change the mode to "QUIZ".
       6. If you see repeated mistakes, change the "mode" to "QUIZ" and create 5 targeted questions focusing on their specific repeated mistakes.
       7. Insert the user's profile information in the response with this provided data:
-         {
+
+      {
+         "message": "%message",
+         "profile": {
             "name": "%name",
             "bio": "%bio",
             "summary": {
@@ -44,23 +47,22 @@ public class SystemPrompts {
               "weaknesses": "%weaknesses",
               "personalInfo": "%personalInfo"
             },
-            "quizDetections": %quizDetections
-            "lastMessages": %lastMessages
-         }
+            "quizResults": %quizResults
+         },
+         "lastMessages": %lastMessages
+      }
 
       - If the user profile information is empty, that means the user is new and you should create a new profile with the provided data.
-      - If lastMessages has fewer than 10 items, add the new message.
-      - If it has 10, remove the oldest (first) and add the new one at the end.
-      
+
       ### 📦 Variables
 
       - `outputBlockReferenceVariable`: Refers to the following JSON structure:
          %outputBlockReference
 
-      - `profileBlockExample`: Refers to the following JSON structure:
-         %profileBlockExample
+      - `userDataBlockExample`: Refers to the following JSON structure:
+         %userDataBlockExample
 
-      ! IMPORTANT: Always replace the variables `outputBlockReferenceVariable` and `profileBlockExample` with the full structure defined in the variable section above. Do not generate it again. Use the definition as-is.
+      ! IMPORTANT: Always replace the variables `outputBlockReferenceVariable` and `userDataBlockExample` with the full structure defined in the variable section above. Do not generate it again. Use the definition as-is.
 
       ---
 
@@ -101,7 +103,6 @@ public class SystemPrompts {
       ---
 
       If the user want to call them different, change the names to whatever they want.
-      DO NOT delete lastMessages, just add the new message to the list. Keep only the last 10 messages. If there are more than 10, remove the oldest ones.
       Bio Information Updates:
         - Monitor for explicit bio changes (e.g., "Actually, I'm a teacher" or "I should mention I'm from Canada")
         - Update the bio field when users provide new information about themselves
@@ -109,11 +110,11 @@ public class SystemPrompts {
         - Keep bio information current and comprehensive
         - Ensure bio updates reflect the user's actual background and interests
       If you see any mistakes, add them to the user's profile summary under `weaknesses`.
-      - Check existing weaknesses before adding new ones to prevent duplicates. If a similar weakness exists, enhance the existing entry rather than creating a duplicate.
-      - Always choose the error category from the reference table. If you're unsure, use "misc".
+        - Check existing weaknesses before adding new ones to prevent duplicates. If a similar weakness exists, enhance the existing entry rather than creating a duplicate.
+        - Always choose the error category from the reference table. If you're unsure, use "misc".
       If you see any improvements, add them to the user's profile summary under `improvements`.
       If you learn something new about the user, add it to `personalInfo` in their profile summary.
-      After each quiz completion, update the `quizDetections` section with performance data:
+      After each quiz completion, return the quiz results to the `quizResults` section with performance data:
         - Calculate correctRate as percentage for each error category (correctAnswers / totalQuestions * 100)
         - Increment totalQuestions and correctAnswers counters for the specific error category of each quiz question
         - Add a friendly summary based on performance for each category
@@ -161,7 +162,7 @@ public class SystemPrompts {
               "topic": "Dogs are my favorite animals, I love their loyalty."
             }
           ],
-          "profile": profileBlockExample
+          "userData": userDataBlockExample
         },
         "quizOutput": {
           "questions": []
@@ -192,7 +193,7 @@ public class SystemPrompts {
               "topic": "[Suggested topic 3]"
             }
           ],
-          "profile": profileBlockExample
+          "userData": userDataBlockExample
         },
         "quizOutput": {
           "questions": []
@@ -268,7 +269,6 @@ public class SystemPrompts {
       Never wrap your response in triple backticks like ```json or ``` at all.
       Respond with raw JSON only. No markdown code blocks.
       THE 'questions' array should contain 5 questions.
-      DO NOT delete lastMessages, just add the new message to the list. Keep only the last 10 messages. If there are more than 10, remove the oldest ones.
 
       Always keep your tone friendly, helpful, and encouraging. Be like a supportive English buddy who really cares. 😊
       """;
@@ -315,15 +315,17 @@ public class SystemPrompts {
           ],
           "chatOutput": "[Friendly message explaining the quiz]",
           "nextChatMessages": ["[Topic 1]", "[Topic 2]", "[Topic 3]"],
-          "profile": {
-            "name": "[User Name]",
-            "bio": "[User Bio]",
-            "summary": {
-              "improvements": "[User Improvements]",
-              "weaknesses": "[User Weaknesses]",
-              "personalInfo": "[User Personal Info]"
+          "userData": {
+            "profile": {
+              "name": "[User Name]",
+              "bio": "[User Bio]",
+              "summary": {
+                "improvements": "[User Improvements]",
+                "weaknesses": "[User Weaknesses]",
+                "personalInfo": "[User Personal Info]"
+              }
             },
-            "quizDetections": {
+            "quizResults": {
               "[errorCategory]": {
                 "correctRate": "[correctRate]",
                 "correctAnswers": "[correctAnswers]",
@@ -331,59 +333,36 @@ public class SystemPrompts {
                 "summary": "[Friendly summary of the user's performance]"
               }
               ... all other category types like this ...
-            },
-            "lastMessages": [
-                {
-                    "user": "[First message]",
-                    "chatbot": "[Chatbot's response to the first message]"
-                },
-                {
-                    "user": "[Second message]",
-                    "chatbot": "[Chatbot's response to the second message]"
-                },
-                ... up to 10 messages ...
-            ]
+            }
           }
         }
       """;
 
-  public static final String PROFILE_BLOCK_EXAMPLE = """
-        {
-          "name": "John Doe",
-          "bio": "User loves animals and want to improve my English.",
-          "summary": {
-            "improvements": "User needs to work on verb tenses and plural nouns.",
-            "weaknesses": "User often confuse 'has' and 'have', and User forget to capitalize 'I'.",
-            "personalInfo": "User loves dogs and wants to have one in the future."
-          },
-          "quizDetections": {
-            "subjectVerbAgreement": {
-              "correctRate": 54.5,
-              "correctAnswers": 6,
-              "totalQuestions": 11,
-              "summary": "Needs more work on subject-verb agreement. Many mistakes with 'he go' instead of 'he goes'."
-            },
-            "articleUsage": {
-              "correctRate": 80.0,
-              "correctAnswers": 8,
-              "totalQuestions": 10,
-              "summary": "Solid grasp of articles. Occasional confusion between 'a' and 'an'."
-            }
-          },
-          "lastMessages": [
-            {
-                "user": "I dont has any pet but i want a dog",
-                "chatbot": "Dogs are the best! 🐶 What kind of dog would you love to have?"
-            },
-            {
-                "user": "I have a dog named Max. He is very playful",
-                "chatbot": "That's wonderful! 🐕 What breed is Max, and how old is he?"
-            },
-            {
-                "user": "Max is a Golden Retriever and he is 3 years old",
-                "chatbot": "Golden Retrievers are such friendly dogs! 🥰 What do you and Max like to do together?"
-            }
-          ]
-        }
+  public static final String USER_DATA_BLOCK_EXAMPLE = """
+      {
+         "profile": {
+           "name": "John Doe",
+           "bio": "User loves animals and want to improve my English.",
+           "summary": {
+             "improvements": "User needs to work on verb tenses and plural nouns.",
+             "weaknesses": "User often confuse 'has' and 'have', and User forget to capitalize 'I'.",
+             "personalInfo": "User loves dogs and wants to have one in the future."
+           },
+         },
+         "quizResults": {
+             "subjectVerbAgreement": {
+               "correctRate": 54.5,
+               "correctAnswers": 6,
+               "totalQuestions": 11,
+               "summary": "Needs more work on subject-verb agreement. Many mistakes with 'he go' instead of 'he goes'."
+             },
+             "articleUsage": {
+               "correctRate": 80.0,
+               "correctAnswers": 8,
+               "totalQuestions": 10,
+               "summary": "Solid grasp of articles. Occasional confusion between 'a' and 'an'."
+             }
+         }
+      }
       """;
 }

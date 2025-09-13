@@ -1,11 +1,20 @@
-import type { PracticeResponse, Profile } from "@/types"
+import type {
+  LastMessage,
+  PracticeResponse,
+  Profile,
+  QuizResults,
+} from "@/types"
 
 export async function postUserInput({
   message,
   profile,
+  quizResults,
+  lastMessages,
 }: {
   message: string
   profile: Profile
+  quizResults: QuizResults
+  lastMessages: LastMessage[]
 }): Promise<PracticeResponse> {
   const rootUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080"
   const url = `${rootUrl}/api/v1/practice/structured`
@@ -13,6 +22,8 @@ export async function postUserInput({
   const data = {
     message,
     profile,
+    quizResults,
+    lastMessages,
   }
 
   try {
