@@ -40,8 +40,8 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
 
   useEffect(() => {
     const getVoices = async () => {
-      const x = await getAvailableVoices(languageCode, voiceGender)
-      setVoices(x)
+      const availableVoices = await getAvailableVoices(languageCode, voiceGender)
+      setVoices(availableVoices)
     }
     getVoices()
 
@@ -112,9 +112,12 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
                 <SelectLabel>Voice Name</SelectLabel>
                 {voices && voices.map(voice => {
                   const displayName = voice.name.split('-').slice(2).join('-')
-                  return <SelectItem key={voice.name} value={voice.name}>
-                    {displayName}
-                  </SelectItem>
+                  if (displayName !== "") {
+                    return <SelectItem key={voice.name} value={voice.name}>
+                      {displayName}
+                    </SelectItem>
+                  }
+
                 })}
               </SelectGroup>
             </SelectContent>
