@@ -1,6 +1,6 @@
 import type { Message, PracticeResponse, UserData, Voice } from "@/types"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useActionData, useLoaderData } from "react-router-dom"
 
 import { nanoid } from 'nanoid'
@@ -10,8 +10,16 @@ import InputForm from "./input-form"
 import ChatMessages from "./chat-messages"
 import playSpeech from "@/functions/play_speech"
 import TypingIndicator from "./typing-indicator"
+import { renderCounter } from "@/functions/render_counter"
 
 export default function ChatUI() {
+
+  ///////////////////////// Render Counter ////////////////////////////
+  const counterRef = useRef(0)
+  counterRef.current = renderCounter({ counter: counterRef.current })
+  console.log(`ChatUI rendered ${counterRef.current} times`)
+  /////////////////////////////////////////////////////////////////////
+
   const savedStr = localStorage.getItem("settings")
   const saved: Voice = savedStr ? JSON.parse(savedStr) : { languageCode: "en-US", voiceName: "en-US-Chirp3-HD-Sadachbia", voiceGender: "MALE" }
 
@@ -62,19 +70,18 @@ export default function ChatUI() {
     }
   }, [actionData])
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [isSplitScreen])
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = e.target.value as string
     setInputValue(content)
 
     if ((content.trim().length > 0) !== hasInput) {
       setHasInput(content.trim().length > 0)
     }
-  }, [hasInput])
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [isSplitScreen])
-
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const content = e.currentTarget.content.value as string
@@ -108,17 +115,18 @@ export default function ChatUI() {
     if (!data.trim()) {
       return
     }
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: nanoid(),
-        role: "user",
-        content: data
-      }
-    ])
-    setLoading(true)
-    setInputValue("")
-    setHasInput(false)
+    setInputValue(data)
+    // setMessages((prev) => [
+    //   ...prev,
+    //   {
+    //     id: nanoid(),
+    //     role: "user",
+    //     content: data
+    //   }
+    // ])
+    // setLoading(true)
+    // setInputValue("")
+    // setHasInput(false)
   }
 
   const handleSpeak = async (text: string) => {

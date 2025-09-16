@@ -1,12 +1,13 @@
 import type { Voice } from "@/types"
 
-import React from "react"
+import React, { useRef } from "react"
 import { Form } from "react-router-dom"
 
-import TextInput from "./text-input"
+import { Textarea } from "./ui/textarea"
 import SendButton from "./send-button"
 import { VoiceInput } from "./voice-input"
 import { SettingsSheet } from "./settings-sheet"
+import { renderCounter } from "@/functions/render_counter"
 
 type InputFormProps = {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
@@ -29,6 +30,13 @@ function InputForm({
   hasInput,
   formRef
 }: InputFormProps) {
+
+  ///////////////////////// Render Counter ////////////////////////////
+  const counterRef = useRef(0)
+  counterRef.current = renderCounter({ counter: counterRef.current })
+  console.log(`InputForm rendered ${counterRef.current} times`)
+  /////////////////////////////////////////////////////////////////////
+
   return (
     <Form method="post" className="relative" onSubmit={onSubmit} ref={formRef}>
       <div className="flex-1 min-h-[56px] max-h-[200px] flex items-center">
@@ -38,7 +46,21 @@ function InputForm({
           <div className="flex flex-col bg-card border border-border rounded-3xl shadow-sm hover:shadow-lg transition-all duration-200 focus-within:shadow-lg focus-within:border-ring min-h-[56px]">
 
             {/* Text Input */}
-            <TextInput inputValue={inputValue} onChange={onChange} onKeyDown={onKeyDown} />
+            <div className="flex-1 flex items-center px-3 py-3">
+              <Textarea
+                name="content"
+                placeholder="Ask anything..."
+                className="custom-scrollbar w-full px-3 py-2 resize-none border-0 rounded-2xl bg-transparent shadow-none text-foreground placeholder-muted-foreground focus:outline-none focus-visible:ring-0 focus:ring-0 text-base leading-6"
+                rows={1}
+                value={inputValue}
+                onChange={onChange}
+                onKeyDown={onKeyDown}
+                style={{
+                  maxHeight: "150px",
+                  overflowY: "auto"
+                }}
+              />
+            </div>
 
             {/* Footer Buttons */}
             <div className="flex items-center justify-between px-3 py-2 border-t border-border">
