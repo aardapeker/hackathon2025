@@ -52,7 +52,7 @@ function Quiz({ questions, onIsLoading }: { questions: Question[]; onIsLoading: 
   }
 
   return (
-    <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center p-4">
+    <div className="w-full h-full bg-background flex flex-col items-center justify-center p-4">
       <Form className="w-full" ref={formRef} onSubmit={handleNext}>
         <Card className="bg-card">
           <CardHeader>
@@ -78,16 +78,17 @@ function Quiz({ questions, onIsLoading }: { questions: Question[]; onIsLoading: 
               {questions[currentQuestionIndex].options.map((option, index) => (
                 <div className="flex flex-col" key={index}>
                   <div
-                    className={` flex items-center space-x-3 p-4 rounded-lg transition-all cursor-pointer hover:bg-accent hover:text-accent-foreground ${selectedAnswer === index.toString()
+                    className={` flex items-center space-x-3 rounded-lg transition-all cursor-pointer hover:bg-accent hover:text-accent-foreground ${selectedAnswer === index.toString()
                       ? `${option === questions[currentQuestionIndex].correctAnswer ? "bg-success hover:bg-success" : "bg-destructive hover:bg-destructive"}  text-accent-foreground`
                       : (selectedAnswer !== "" && questions[currentQuestionIndex].correctAnswer === option ? "bg-success hover:bg-success" : "bg-secondary text-muted-foreground ")
                       }`}
                     style={selectedAnswer !== "" ? { pointerEvents: "none" } : {}}
                   >
-                    <RadioGroupItem value={index.toString()} id={`option-${index}`} className={`text-foreground `} disabled={selectedAnswer !== "" ? true : false} />
+                    {/* Later I can remove redundant classes.  */}
+                    <RadioGroupItem value={index.toString()} id={`option-${index}`} className={`text-foreground hidden`} disabled={selectedAnswer !== "" ? true : false} />
                     <Label
                       htmlFor={`option-${index}`}
-                      className="flex-1 cursor-pointer text-lg text-balance hover:text-foreground"
+                      className="flex-1 cursor-pointer text-lg text-balance hover:text-foreground p-4"
                     >
                       {option}
                     </Label>
@@ -114,11 +115,11 @@ function Quiz({ questions, onIsLoading }: { questions: Question[]; onIsLoading: 
       </Form>
       <Accordion
         type="multiple"
-        className="w-full"
+        className="w-full h-0"
         value={openAccordions}
         onValueChange={setOpenAccordions}
       >
-        <div className="mb-2">
+        <div className="mb-2 px-1">
           <AccordionItem value={"item-1"}>
             <AccordionTrigger>Hint: </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-4 text-balance">

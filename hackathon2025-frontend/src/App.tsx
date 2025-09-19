@@ -28,7 +28,7 @@ function App() {
         loader={rootLoader}
         errorElement={<ErrorPage />}
       >
-        <Route index element={<ChatUI />} action={chatAction} loader={chatUILoader} />
+        <Route path="/" element={<ChatUI />} action={chatAction} loader={chatUILoader} />
       </Route>
     )
   )
