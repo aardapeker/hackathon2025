@@ -90,6 +90,8 @@ public class SystemPrompts {
                 - `explanation`: A markdown-formatted string with emojis and clear explanations
 
                 If you make ANY change to `fixedInput`, you MUST explain it inside `fixSteps`.
+                If you don't see any mistakes, `fixSteps` should be an empty list and `fixedInput` should be empty string.
+
                 Even if you're not sure which category it is, use `"misc"` with an explanation.
                 At the end of every reply, include 3 conversation suggestions in the `nextChatMessages` array.
                 These should be written from the user's perspective as example responses they could send next.
