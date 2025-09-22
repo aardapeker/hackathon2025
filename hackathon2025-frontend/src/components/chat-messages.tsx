@@ -1,8 +1,10 @@
-import type { Message, Output } from "@/types"
+import type { Output } from "@/types"
 
 import { diffChars } from "diff"
 import { Form } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
+
+import { nanoid } from 'nanoid'
 
 import { AlertCircleIcon, CheckCircle2Icon, User, Volume2 } from "lucide-react"
 
@@ -12,18 +14,22 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
 
 import { errorLabels } from "@/constants/error_labels"
+import { useRef } from "react"
+import { useMessages } from "@/hooks/use-messages"
+
 
 type MessageProps = {
-  messages: Message[]
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-  onClick: (msg: string) => void
   onSpeak: (text: string) => void
   isSpeaking: boolean
-  suggestionFormRef: React.RefObject<HTMLFormElement | null>
-  suggestionInputRef: React.RefObject<HTMLInputElement | null>
 }
 
-function ChatMessages({ messages, onSubmit, onClick, onSpeak, isSpeaking, suggestionFormRef, suggestionInputRef }: MessageProps) {
+function ChatMessages({ onSpeak, isSpeaking }: MessageProps) {
+
+  const { addUserMessage, messages } = useMessages()
+
+  const suggestionFormRef = useRef<HTMLFormElement>(null)
+  const suggestionInputRef = useRef<HTMLInputElement>(null)
+
 
   return messages.map((message, idx) => {
     let originalInput = ""
@@ -42,6 +48,20 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, isSpeaking, sugges
     let diff: import("diff").ChangeObject<string>[] = []
     if (originalInput && fixedInput) {
       diff = diffChars(originalInput, fixedInput)
+    }
+
+    const handleClick = (content: string) => {
+      if (suggestionInputRef.current) {
+        suggestionInputRef.current.value = content
+      }
+
+      addUserMessage({
+        id: nanoid(),
+        role: "user",
+        content
+      })
+
+      suggestionFormRef.current?.requestSubmit()
     }
 
     return <div
@@ -152,7 +172,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, isSpeaking, sugges
             {/* Next Chat Messages */}
             <div>
               <span className="font-semibold text-muted-foreground">Suggestions:</span>
-              <Form method="post" className="relative" onSubmit={onSubmit} ref={suggestionFormRef}>
+              <Form method="post" className="relative" ref={suggestionFormRef}>
                 <input
                   ref={suggestionInputRef}
                   type="hidden"
@@ -166,7 +186,7 @@ function ChatMessages({ messages, onSubmit, onClick, onSpeak, isSpeaking, sugges
                       type="button"
                       className="h-fit max-w-fit px-3 py-1 rounded-xl bg-muted text-muted-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm whitespace-normal transition-colors duration-200"
                       tabIndex={-1}
-                      onClick={() => onClick(msg.topic)}
+                      onClick={() => handleClick(msg.topic)}
                     >
                       {msg.topic}
                     </Button>

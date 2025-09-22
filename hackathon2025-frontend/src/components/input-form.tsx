@@ -1,6 +1,6 @@
 import type { Voice } from "@/types"
 
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import { Form } from "react-router-dom"
 
 import { Textarea } from "./ui/textarea"
@@ -9,26 +9,16 @@ import { VoiceInput } from "./voice-input"
 import { SettingsSheet } from "./settings-sheet"
 import { renderCounter } from "@/functions/render_counter"
 
+import { nanoid } from 'nanoid'
+import { useMessages } from "@/hooks/use-messages"
+
+
 type InputFormProps = {
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
   onData: (data: Voice) => void
-  onResult: (transcript: string, isFinal: boolean) => void
-  inputValue: string
-  hasInput: boolean
-  formRef: React.RefObject<HTMLFormElement | null>
 }
 
 function InputForm({
-  onSubmit,
-  onChange,
-  onKeyDown,
   onData,
-  onResult,
-  inputValue,
-  hasInput,
-  formRef
 }: InputFormProps) {
 
   ///////////////////////// Render Counter ////////////////////////////
@@ -37,8 +27,64 @@ function InputForm({
   console.log(`InputForm rendered ${counterRef.current} times`)
   /////////////////////////////////////////////////////////////////////
 
+  const [hasInput, setHasInput] = useState<boolean>(false)
+  const [inputValue, setInputValue] = useState("")
+
+
+  const { addUserMessage } = useMessages()
+
+
+  const formRef = useRef<HTMLFormElement>(null)
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      if (!inputValue.trim()) {
+        e.preventDefault()
+        return
+      }
+      e.preventDefault()
+      formRef.current?.requestSubmit()
+    }
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const content = e.target.value as string
+    setInputValue(content)
+
+    if ((content.trim().length > 0) !== hasInput) {
+      setHasInput(content.trim().length > 0)
+    }
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const content = e.currentTarget.content.value as string
+
+    if (e.currentTarget.content.value !== null) {
+      addUserMessage({
+        id: nanoid(),
+        role: "user",
+        content
+      })
+
+      setInputValue("")
+      setHasInput(false)
+    }
+  }
+
+  const handleResult = (data: string, isFinal: boolean) => {
+    if (!isFinal) return
+
+    console.log(data)
+    if (!data.trim()) {
+      return
+    }
+    console.log(data, "Voice Input!!")
+    setInputValue(data)
+  }
+
+
   return (
-    <Form method="post" className="relative" onSubmit={onSubmit} ref={formRef}>
+    <Form method="post" className="relative" onSubmit={handleSubmit} ref={formRef}>
       <div className="flex-1 min-h-[56px] max-h-[200px] flex items-center">
 
         <div className="relative w-full">
@@ -53,8 +99,8 @@ function InputForm({
                 className="custom-scrollbar w-full px-3 py-2 resize-none border-0 rounded-2xl bg-transparent shadow-none text-foreground placeholder-muted-foreground focus:outline-none focus-visible:ring-0 focus:ring-0 text-base leading-6"
                 rows={1}
                 value={inputValue}
-                onChange={onChange}
-                onKeyDown={onKeyDown}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
                 style={{
                   maxHeight: "150px",
                   overflowY: "auto"
@@ -66,7 +112,7 @@ function InputForm({
             <div className="flex items-center justify-between px-3 py-2 border-t border-border">
               <SettingsSheet onData={onData} />
               <div className="flex gap-2">
-                <VoiceInput onResult={onResult} />
+                <VoiceInput onResult={handleResult} />
                 <SendButton hasInput={hasInput} />
               </div>
             </div>
