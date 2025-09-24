@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import type { Output, PracticeResponse, UserData, Voice } from "@/types"
 
 import { useEffect, useRef, useState } from "react"
@@ -114,7 +115,7 @@ export default function ChatUI() {
             {/* Quiz */}
             <div className="border-border flex flex-col w-screen custom-scrollbar overflow-y-auto">
               <div className="flex-1 flex items-center justify-center">
-                <Quiz questions={actionData.quizOutput.questions} />
+                <Quiz questions={actionData.quizOutput.questions} onSetSplit={(data) => setIsSplitScreen(data)} />
               </div>
             </div>
             {/* Chatbot Message */}
@@ -161,7 +162,7 @@ export default function ChatUI() {
           <div className="flex flex-1 overflow-hidden">
             <div className="w-1/3 border-r border-border flex flex-col custom-scrollbar overflow-y-auto">
               <div className="flex-1 flex items-center justify-center">
-                <Quiz questions={actionData.quizOutput.questions} />
+                <Quiz questions={actionData.quizOutput.questions} onSetSplit={(data) => setIsSplitScreen(data)} />
               </div>
             </div>
             <div className="w-2/3 flex flex-col custom-scrollbar overflow-y-auto">
@@ -184,7 +185,7 @@ export default function ChatUI() {
           <div className="flex flex-1 overflow-hidden">
             <div className="w-1/2 border-r border-border flex flex-col custom-scrollbar overflow-y-auto">
               <div className="flex-1 flex items-center justify-center">
-                <Quiz questions={actionData.quizOutput.questions} />
+                <Quiz questions={actionData.quizOutput.questions} onSetSplit={(data) => setIsSplitScreen(data)} />
               </div>
             </div>
 

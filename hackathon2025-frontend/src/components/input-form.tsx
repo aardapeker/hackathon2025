@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import type { Voice } from "@/types"
 
 import React, { useRef, useState } from "react"

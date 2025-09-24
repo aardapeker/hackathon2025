@@ -1,7 +1,7 @@
 import type { ErrorKey, Question } from "@/types"
 
-import { useEffect, useRef, useState } from "react"
-import { Form, useNavigation, useSubmit } from "react-router-dom"
+import { useRef, useState } from "react"
+import { Form, useSubmit } from "react-router-dom"
 
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
@@ -18,25 +18,17 @@ export type UserAnswer = {
   selectedAnswer: string
 }
 
-function Quiz({ questions }: { questions: Question[] }) {
+function Quiz({ questions, onSetSplit }: { questions: Question[], onSetSplit: (data: boolean) => void }) {
   const [selectedAnswer, setSelectedAnswer] = useState("")
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [openAccordions, setOpenAccordions] = useState<string[]>([])
 
-  const { isLoading, stopLoading, startLoading } = useLoading()
-
-  const navigation = useNavigation()
+  const { startLoading } = useLoading()
 
   const formRef = useRef<HTMLFormElement>(null)
   const submit = useSubmit()
   const progressPercentage = ((currentQuestionIndex) / questions.length) * 100
-
-  useEffect(() => {
-    if (navigation.state === "idle") {
-      stopLoading()
-    }
-  }, [navigation.state, stopLoading])
 
   const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -56,8 +48,9 @@ function Quiz({ questions }: { questions: Question[] }) {
     } else {
       const formData = new FormData()
       formData.append("quizAnswers", JSON.stringify(newAnswers))
-      startLoading()
       submit(formData, { method: "post" })
+      startLoading()
+      onSetSplit(false)
     }
   }
 
@@ -113,7 +106,7 @@ function Quiz({ questions }: { questions: Question[] }) {
               <Button
                 type="submit"
                 variant="secondary"
-                disabled={!selectedAnswer || isLoading}
+                disabled={!selectedAnswer}
                 size="lg"
                 className="text-muted-foreground hover:text-accent-foreground rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
