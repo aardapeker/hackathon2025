@@ -8,12 +8,12 @@ public class UserDataBlockExample {
             {
                 "profile": {
                     "name": "John Doe",
-                    "bio": "User loves animals and want to improve my English.",
+                    "bio": "User loves animals and wants to improve English.",
                     "summary": {
-                    "improvements": "User needs to work on verb tenses and plural nouns.",
-                    "weaknesses": "User often confuse 'has' and 'have', and User forget to capitalize 'I'.",
-                    "personalInfo": "User loves dogs and wants to have one in the future."
-                    },
+                        "improvements": "User needs to work on verb tenses and plural nouns.",
+                        "weaknesses": "User often confuses 'has' and 'have', and forgets to capitalize 'I'.",
+                        "personalInfo": "User loves dogs and wants to have one in the future."
+                    }
                 },
                 "quizResults": {
                     "subjectVerbAgreement": {

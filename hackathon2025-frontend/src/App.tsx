@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
 
 import ChatUI from "./components/chat-ui"

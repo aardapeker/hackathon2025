@@ -1,10 +1,11 @@
 import type { Output } from "@/types"
 
-import { diffChars } from "diff"
+import { useRef } from "react"
 import { Form } from "react-router-dom"
-import ReactMarkdown from "react-markdown"
 
 import { nanoid } from 'nanoid'
+import { diffChars } from "diff"
+import ReactMarkdown from "react-markdown"
 
 import { AlertCircleIcon, CheckCircle2Icon, User, Volume2 } from "lucide-react"
 
@@ -14,9 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion"
 
 import { errorLabels } from "@/constants/error_labels"
-import { useRef } from "react"
 import { useMessages } from "@/hooks/use-messages"
-
 
 type MessageProps = {
   onSpeak: (text: string) => void
@@ -170,30 +169,32 @@ function ChatMessages({ onSpeak, isSpeaking }: MessageProps) {
             }
 
             {/* Next Chat Messages */}
-            <div>
-              <span className="font-semibold text-muted-foreground">Suggestions:</span>
-              <Form method="post" className="relative" ref={suggestionFormRef}>
-                <input
-                  ref={suggestionInputRef}
-                  type="hidden"
-                  name="content"
-                />
-                <div className="flex flex-wrap gap-2 my-4">
-                  {(message.content as Output).nextChatMessages.map((msg, idx) => (
+            {(message.content as Output).nextChatMessages.length > 0 &&
+              <div>
+                <span className="font-semibold text-muted-foreground">Suggestions:</span>
+                <Form method="post" className="relative" ref={suggestionFormRef}>
+                  <input
+                    ref={suggestionInputRef}
+                    type="hidden"
+                    name="content"
+                  />
+                  <div className="flex flex-wrap gap-2 my-4">
+                    {(message.content as Output).nextChatMessages.map((msg, idx) => (
 
-                    <Button
-                      key={idx}
-                      type="button"
-                      className="h-fit max-w-fit px-3 py-1 rounded-xl bg-muted text-muted-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm whitespace-normal transition-colors duration-200"
-                      tabIndex={-1}
-                      onClick={() => handleClick(msg.topic)}
-                    >
-                      {msg.topic}
-                    </Button>
-                  ))}
-                </div>
-              </Form>
-            </div>
+                      <Button
+                        key={idx}
+                        type="button"
+                        className="h-fit max-w-fit px-3 py-1 rounded-xl bg-muted text-muted-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground text-sm whitespace-normal transition-colors duration-200"
+                        tabIndex={-1}
+                        onClick={() => handleClick(msg.topic)}
+                      >
+                        {msg.topic}
+                      </Button>
+                    ))}
+                  </div>
+                </Form>
+              </div>
+            }
           </div>
         </div>
       ) : (

@@ -24,7 +24,7 @@ public class OutputBlockExampleForQuiz {
                 ],
                 "chatOutput": "Dogs are wonderful companions! 🐶 I noticed a few areas where you can improve your English, so I prepared 5 quiz questions to help you practice. Let's work on these together and boost your skills!",
                 "nextChatMessages": [],
-                "userData": userDataBlockExample
+                "userData": %userDataBlockExample
             }
             """;
 }

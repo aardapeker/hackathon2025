@@ -34,7 +34,7 @@ public class OutputBlockExampleForChat {
                     "topic": "Dogs are my favorite animals, I love their loyalty."
                     }
                 ],
-                "userData": userDataBlockExample
+                "userData": %userDataBlockExample
             }
             """;
 }

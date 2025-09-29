@@ -3,16 +3,15 @@ import type { Voice } from "@/types"
 
 import React, { useRef, useState } from "react"
 import { Form } from "react-router-dom"
+import { nanoid } from 'nanoid'
 
-import { Textarea } from "./ui/textarea"
+import TextInput from "./text-input"
 import SendButton from "./send-button"
 import { VoiceInput } from "./voice-input"
 import { SettingsSheet } from "./settings-sheet"
+
 import { renderCounter } from "@/functions/render_counter"
-
-import { nanoid } from 'nanoid'
 import { useMessages } from "@/hooks/use-messages"
-
 
 type InputFormProps = {
   onData: (data: Voice) => void
@@ -29,45 +28,34 @@ function InputForm({
   /////////////////////////////////////////////////////////////////////
 
   const [hasInput, setHasInput] = useState<boolean>(false)
-  const [inputValue, setInputValue] = useState("")
-
+  const [newInputValue, setNewInputValue] = useState("")
 
   const { addUserMessage } = useMessages()
 
-
   const formRef = useRef<HTMLFormElement>(null)
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      if (!inputValue.trim()) {
-        e.preventDefault()
-        return
-      }
-      e.preventDefault()
-      formRef.current?.requestSubmit()
-    }
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const content = e.target.value as string
-    setInputValue(content)
-
-    if ((content.trim().length > 0) !== hasInput) {
-      setHasInput(content.trim().length > 0)
+  const handleInput = (value: string) => {
+    if (value.trim() !== "" && hasInput === false) {
+      setHasInput(true)
+      setNewInputValue(value)
+      // If I don't set the state like this, the input does not reset after submitting.
+    } else if (value.trim() === "" && hasInput === true) {
+      setHasInput(false)
+      setNewInputValue("")
     }
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const content = e.currentTarget.content.value as string
+    const content = e.currentTarget.content.value.trim() as string
 
-    if (e.currentTarget.content.value !== null) {
+    if (content !== "") {
       addUserMessage({
         id: nanoid(),
         role: "user",
         content
       })
 
-      setInputValue("")
+      setNewInputValue("")
       setHasInput(false)
     }
   }
@@ -75,14 +63,11 @@ function InputForm({
   const handleResult = (data: string, isFinal: boolean) => {
     if (!isFinal) return
 
-    console.log(data)
-    if (!data.trim()) {
-      return
-    }
-    console.log(data, "Voice Input!!")
-    setInputValue(data)
-  }
+    if (data.trim() === "") return
 
+    console.log(data, "Voice Input!!")
+    setNewInputValue(data)
+  }
 
   return (
     <Form method="post" className="relative" onSubmit={handleSubmit} ref={formRef}>
@@ -94,18 +79,10 @@ function InputForm({
 
             {/* Text Input */}
             <div className="flex-1 flex items-center px-3 py-3">
-              <Textarea
-                name="content"
-                placeholder="Ask anything..."
-                className="custom-scrollbar w-full px-3 py-2 resize-none border-0 rounded-2xl bg-transparent shadow-none text-foreground placeholder-muted-foreground focus:outline-none focus-visible:ring-0 focus:ring-0 text-base leading-6"
-                rows={1}
-                value={inputValue}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                style={{
-                  maxHeight: "150px",
-                  overflowY: "auto"
-                }}
+              <TextInput
+                formRef={formRef}
+                newInputValue={newInputValue}
+                onInputValue={handleInput}
               />
             </div>
 

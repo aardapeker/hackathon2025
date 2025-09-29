@@ -14,8 +14,8 @@ public class ReviewPrompt {
                     "bio": "%bio",
                     "summary": {
                     "improvements": "%improvements",
-                    "weaknesses": "%weaknesses",
-                    "personalInfo": "%personalInfo"
+                        "weaknesses": "%weaknesses",
+                        "personalInfo": "%personalInfo"
                     },
                     "quizResults": %quizResults
                 },
@@ -24,16 +24,8 @@ public class ReviewPrompt {
 
             - If the user profile information is empty, that means the user is new and you should create a new profile with the provided data.
 
-            - `userDataBlockExample`: Refers to the following JSON structure:
-                %userDataBlockExample
-
-            - `outputBlockExampleForReview`: Refers to the following JSON structure:
-                %outputBlockExampleForReview
-
             - This is error reference table for the `fixSteps`:
                 %errorReferenceTable
-
-            ! IMPORTANT: Always replace the variables `outputBlockExampleForReview` and `userDataBlockExample` with the full structure defined in the variable section above. Do not generate it again. Use the definition as-is.
 
             ---
 
@@ -60,7 +52,7 @@ public class ReviewPrompt {
 
             {
                 "mode": "REVIEW",
-                "output": outputBlockExampleForReview,
+                "output": %outputBlockExampleForReview,
                 "quizOutput": {
                     "questions": []
                 }

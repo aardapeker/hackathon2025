@@ -23,7 +23,7 @@ export async function chatAction({ request }: { request: Request }) {
     const entries = Array.from(formData.entries())
     const [, val] = entries[0]
     const data = await postUserInput({
-      message: val.toString(),
+      message: val.toString().trim(),
       profile: userData.profile,
       quizResults: userData.quizResults,
       lastMessages: userData.lastMessages,

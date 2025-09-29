@@ -44,7 +44,7 @@ export type Explanation = {
   [option: string]: string
 }
 
-export type Mode = "CHAT" | "QUIZ"
+export type Mode = "CHAT" | "QUIZ" | "REVIEW"
 
 export type Summary = {
   improvements: string

@@ -60,7 +60,7 @@ public class OutputBlockExample {
                         ... all other category types like this ...
                     }
                 }
-                }
-                """;
+            }
+            """;
 
 }

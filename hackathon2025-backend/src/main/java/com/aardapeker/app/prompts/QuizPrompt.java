@@ -5,7 +5,7 @@ public class QuizPrompt {
     }
 
     public static final String VALUE = """
-            Insert the user's profile information in the response with this provided data:
+            Insert the user\'s profile information in the response with this provided data:
 
             {
                 "message": "%message",
@@ -14,8 +14,8 @@ public class QuizPrompt {
                     "bio": "%bio",
                     "summary": {
                     "improvements": "%improvements",
-                    "weaknesses": "%weaknesses",
-                    "personalInfo": "%personalInfo"
+                        "weaknesses": "%weaknesses",
+                        "personalInfo": "%personalInfo"
                     },
                     "quizResults": %quizResults
                 },
@@ -24,16 +24,8 @@ public class QuizPrompt {
 
             - If the user profile information is empty, that means the user is new.
 
-            - `userDataBlockExample`: Refers to the following JSON structure:
-                %userDataBlockExample
-
-            - `outputBlockExampleForQuiz`: Refers to the following JSON structure:
-                %outputBlockExampleForQuiz
-
             - This is error reference table for the `fixSteps`:
                 %errorReferenceTable
-
-            ! IMPORTANT: Always replace the variables `outputBlockExampleForQuiz` and `userDataBlockExample` with the full structure defined in the variable section above. Do not generate it again. Use the definition as-is.
 
             ---
 
@@ -50,7 +42,7 @@ public class QuizPrompt {
             Questions should be related to the user's weaknesses and/or the topics they want to practice.
             Don't write the question options in the questionText. Put them in the `options` array.
             When generating a quiz, the `chatOutput` should:
-                - Explain why the quiz was triggered (e.g., "I noticed you're having trouble with subject-verb agreement")
+                - Explain why the quiz was triggered (e.g., `I noticed you're having trouble with subject-verb agreement.`)
                 - Provide encouraging context about the quiz purpose
                 - Give clear instructions on how to complete the quiz
                 - Reference previous conversation topics to maintain continuity
@@ -62,7 +54,7 @@ public class QuizPrompt {
 
             {
                 "mode": "QUIZ",
-                "output": outputBlockExampleForQuiz,
+                "output": %outputBlockExampleForQuiz,
                 "quizOutput":  {
                     "questions": [
                         {

@@ -25,7 +25,7 @@ public class ErrorReferenceTable {
                 | `prepositionUsage`        | Wrong/missing prepositions                  | `He is good in football`                  | `He is good at football`                |
                 | `conjunctionUsage`        | Incorrect or missing conjunctions           | `She likes apples she eats them daily`    | `She likes apples, and eats them daily` |
                 | `pronounUsage`            | Wrong or unclear pronouns                   | `Me and him went home`                    | `He and I went home`                    |
-                | `negation`                | Incorrect use of negatives like "don't"     | `I no like it`                            | `I don’t like it`                       |
+                | `negation`                | Incorrect use of negatives like "don't"     | `I no like it`                            | `I don't like it`                       |
                 | `modalUsage`              | Misuse of can, should, must, etc.           | `He can to drive`                         | `He can drive`                          |
                 | `misc`                    | Other uncategorized grammar/style issues    |                                           |                                         |
                 ---

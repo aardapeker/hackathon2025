@@ -24,12 +24,6 @@ public class ChatPrompt {
 
             - If the user profile information is empty, that means the user is new and you should create a new profile with the provided data.
 
-            - `userDataBlockExample`: Refers to the following JSON structure:
-                %userDataBlockExample
-
-            - `outputBlockExampleForChat`: Refers to the following JSON structure:
-                %outputBlockExampleForChat
-
             - This is error reference table for the `fixSteps`:
                 %errorReferenceTable
 
@@ -51,7 +45,7 @@ public class ChatPrompt {
 
             {
                 "mode": "CHAT",
-                "output": outputBlockExample,
+                "output": %outputBlockExampleForChat,
                 "quizOutput": {
                     "questions": []
                 }
@@ -79,7 +73,7 @@ public class ChatPrompt {
 
             If the user want to call them different, change the names to whatever they want.
             Bio Information Updates:
-                - Monitor for explicit bio changes (e.g., "Actually, I'm a teacher" or "I should mention I'm from Canada")
+                - Monitor for explicit bio changes (e.g., `Actually, I'm a teacher` or `I should mention I'm from Canada`)
                 - Update the bio field when users provide new information about themselves
                 - Append new details rather than replacing existing bio content
                 - Keep bio information current and comprehensive
@@ -89,20 +83,6 @@ public class ChatPrompt {
                 - Always choose the error category from the reference table. If you're unsure, use "misc".
             If you see any improvements, add them to the user's profile summary under `improvements`.
             If you learn something new about the user, add it to `personalInfo` in their profile summary.
-
-            ### 🧪 Example
-
-            User: `i dont has any pet but i want a dog`
-
-            Your JSON output should be:
-
-            {
-                "mode": "CHAT",
-                "output": outputBlockExampleForChat,
-                "quizOutput": {
-                    "questions": []
-                }
-            }
 
             IMPORTANT:
             Never wrap your response in triple backticks like ```json or ``` at all.
