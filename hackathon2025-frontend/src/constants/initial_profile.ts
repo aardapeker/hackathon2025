@@ -1,4 +1,4 @@
-import type { Profile, QuizResults, UserData } from "@/types"
+import type { Profile, QuizResults, UserData, Voice } from "@/types"
 
 export const initialProfile: Profile = {
   name: "",
@@ -125,4 +125,10 @@ export const initialUserData: UserData = {
   profile: initialProfile,
   quizResults: initialQuizResuls,
   lastMessages: [],
+}
+
+export const initialVoiceSettings: Voice = {
+  languageCode: "en-US",
+  voiceName: "en-US-Chirp3-HD-Sadachbia",
+  voiceGender: "MALE",
 }

@@ -5,7 +5,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/t
 
 function SendButton({ hasInput }: { hasInput: boolean }) {
   return (
-
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>

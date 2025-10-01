@@ -107,7 +107,7 @@ public class ChatController {
                 .builder()
                 .model("gemini-2.5-flash-lite")
                 .temperature(0.2)
-                .maxTokens(100)
+                .maxTokens(500)
                 .build();
 
         final ChatOptions chatOptions = ChatOptions

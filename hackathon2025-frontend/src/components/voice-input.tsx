@@ -8,7 +8,14 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import useSpeechRecognition from "@/hooks/use-speech-recognition"
 
 export function VoiceInput({ onResult }: { onResult: (transcript: string, isFinal: boolean) => void }) {
-  const { transcript, isFinal, isListening, startListening, stopListening, hasRecognitionSupport } = useSpeechRecognition()
+  const {
+    transcript,
+    isFinal,
+    isListening,
+    startListening,
+    stopListening,
+    hasRecognitionSupport
+  } = useSpeechRecognition()
 
   useEffect(() => {
     if (transcript) {

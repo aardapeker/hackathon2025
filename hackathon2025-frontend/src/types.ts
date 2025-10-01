@@ -114,9 +114,3 @@ export type Voice = {
   voiceName: string
   voiceGender: string
 }
-
-export type VoiceBackend = {
-  languageCode: string
-  name: string
-  ssmlGender: string
-}

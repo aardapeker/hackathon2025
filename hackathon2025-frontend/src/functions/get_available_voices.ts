@@ -1,9 +1,9 @@
-import type { VoiceBackend } from "@/types"
+import type { Voice } from "@/types"
 
 async function getAvailableVoices(
   languageCode?: string,
   voiceGender?: string,
-): Promise<VoiceBackend[]> {
+): Promise<Voice[]> {
   const rootUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080"
 
   let url = languageCode

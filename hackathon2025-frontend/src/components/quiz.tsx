@@ -28,15 +28,17 @@ function Quiz({ questions, onSetSplit }: { questions: Question[], onSetSplit: (d
 
   const formRef = useRef<HTMLFormElement>(null)
   const submit = useSubmit()
+
+  const currentQuestion = questions[currentQuestionIndex]
   const progressPercentage = ((currentQuestionIndex) / questions.length) * 100
 
   const handleNext = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const newAnswer: UserAnswer = {
-      category: questions[currentQuestionIndex].category,
-      questionText: questions[currentQuestionIndex].questionText,
-      correctAnswer: questions[currentQuestionIndex].correctAnswer,
-      selectedAnswer: questions[currentQuestionIndex].options[+selectedAnswer]
+      category: currentQuestion.category,
+      questionText: currentQuestion.questionText,
+      correctAnswer: currentQuestion.correctAnswer,
+      selectedAnswer: currentQuestion.options[+selectedAnswer]
     }
     const newAnswers = [...userAnswers, newAnswer]
     setUserAnswers(newAnswers)
@@ -75,20 +77,20 @@ function Quiz({ questions, onSetSplit }: { questions: Question[], onSetSplit: (d
           </CardHeader>
           <CardContent className="space-y-6">
             <h2 className="text-xl font-semibold leading-relaxed ">
-              {questions[currentQuestionIndex].questionText}
+              {currentQuestion.questionText}
             </h2>
             <RadioGroup value={selectedAnswer} onValueChange={setSelectedAnswer} className="space-y-3" >
-              {questions[currentQuestionIndex].options.map((option, index) => (
+              {currentQuestion.options.map((option, index) => (
                 <div className="flex flex-col" key={index}>
+                  {/* Later I can simplify these classes. */}
                   <div
-                    className={` flex items-center space-x-3 rounded-lg transition-all cursor-pointer hover:bg-accent hover:text-accent-foreground ${selectedAnswer === index.toString()
-                      ? `${option === questions[currentQuestionIndex].correctAnswer ? "bg-success hover:bg-success" : "bg-destructive hover:bg-destructive"}  text-accent-foreground`
-                      : (selectedAnswer !== "" && questions[currentQuestionIndex].correctAnswer === option ? "bg-success hover:bg-success" : "bg-secondary text-muted-foreground ")
+                    className={`flex items-center space-x-3 rounded-lg transition-all cursor-pointer hover:bg-accent hover:text-accent-foreground ${selectedAnswer === index.toString()
+                      ? `${option === currentQuestion.correctAnswer ? "bg-success hover:bg-success" : "bg-destructive hover:bg-destructive"}  text-accent-foreground`
+                      : (selectedAnswer !== "" && currentQuestion.correctAnswer === option ? "bg-success hover:bg-success" : "bg-secondary text-muted-foreground ")
                       }`}
                     style={selectedAnswer !== "" ? { pointerEvents: "none" } : {}}
                   >
-                    {/* Later I can remove redundant classes.  */}
-                    <RadioGroupItem value={index.toString()} id={`option-${index}`} className={`text-foreground hidden`} disabled={selectedAnswer !== "" ? true : false} />
+                    <RadioGroupItem value={index.toString()} id={`option-${index}`} className="text-foreground hidden" disabled={selectedAnswer !== ""} />
                     <Label
                       htmlFor={`option-${index}`}
                       className="flex-1 cursor-pointer text-lg text-balance hover:text-foreground p-4"
@@ -96,8 +98,8 @@ function Quiz({ questions, onSetSplit }: { questions: Question[], onSetSplit: (d
                       {option}
                     </Label>
                   </div>
-                  {(selectedAnswer === index.toString() || questions[currentQuestionIndex].correctAnswer === option) && <div className={`p-3 text-muted-foreground ${selectedAnswer === "" && "hidden"}`}>
-                    {selectedAnswer !== "" && questions[currentQuestionIndex].explanation[option]}
+                  {(selectedAnswer === index.toString() || currentQuestion.correctAnswer === option) && <div className={`p-3 text-muted-foreground ${selectedAnswer === "" && "hidden"}`}>
+                    {selectedAnswer !== "" && currentQuestion.explanation[option]}
                   </div>}
                 </div>
               ))}
@@ -126,7 +128,7 @@ function Quiz({ questions, onSetSplit }: { questions: Question[], onSetSplit: (d
           <AccordionItem value={"item-1"}>
             <AccordionTrigger>Hint: </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-4 text-balance">
-              {questions[currentQuestionIndex].hint}
+              {currentQuestion.hint}
             </AccordionContent>
           </AccordionItem>
         </div>

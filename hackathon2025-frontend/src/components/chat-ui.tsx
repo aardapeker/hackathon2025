@@ -8,18 +8,23 @@ import { nanoid } from 'nanoid'
 
 import Quiz from "./quiz"
 import InputForm from "./input-form"
-import ChatMessages from "./chat-messages"
-import playSpeech from "@/functions/play_speech"
-import TypingIndicator from "./typing-indicator"
-import { renderCounter } from "@/functions/render_counter"
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer"
 import { Button } from "./ui/button"
+import ChatMessages from "./chat-messages"
+import TypingIndicator from "./typing-indicator"
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer"
+
 import ReactMarkdown from "react-markdown"
 import { MessageSquare, Volume2 } from "lucide-react"
+
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useIsDesktop } from "@/hooks/use-desktop"
 import { useMessages } from "@/hooks/use-messages"
 import { useLoading } from "@/hooks/use-loading"
+
+import playSpeech from "@/functions/play_speech"
+import { renderCounter } from "@/functions/render_counter"
+
+import { initialVoiceSettings } from "@/constants/initial_profile"
 
 export default function ChatUI() {
 
@@ -30,7 +35,7 @@ export default function ChatUI() {
   /////////////////////////////////////////////////////////////////////
 
   const savedStr = localStorage.getItem("settings")
-  const saved: Voice = savedStr ? JSON.parse(savedStr) : { languageCode: "en-US", voiceName: "en-US-Chirp3-HD-Sadachbia", voiceGender: "MALE" }
+  const saved: Voice = savedStr ? JSON.parse(savedStr) : initialVoiceSettings
 
   const [settingsData, setSettingsData] = useState(saved)
   const [isSplitScreen, setIsSplitScreen] = useState(false)
@@ -42,12 +47,8 @@ export default function ChatUI() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const processedActionRef = useRef<string | null>(null)
 
-
   const userData = JSON.parse(useLoaderData()) as UserData
   const actionData = useActionData() as PracticeResponse
-
-  // const isMobile = useMediaQuery("(max-width: 768px)")
-  // const isDesktop = useMediaQuery("(min-width: 1200px)")
 
   const isMobile = useIsMobile()
   const isDesktop = useIsDesktop()
@@ -57,7 +58,6 @@ export default function ChatUI() {
   }, [messages])
 
   useEffect(() => {
-
     if (!actionData) {
       return
     }
@@ -87,7 +87,6 @@ export default function ChatUI() {
       }
     })
 
-
   }, [actionData, addAssistantMessage])
 
   useEffect(() => {
@@ -96,7 +95,7 @@ export default function ChatUI() {
 
   const handleSpeak = async (text: string) => {
     setIsSpeaking(true)
-    console.log(settingsData, "from handle Speak")
+    console.log(settingsData, "from handleSpeak")
     await playSpeech(text, settingsData.voiceName, settingsData.voiceGender, settingsData.languageCode)
     setIsSpeaking(false)
   }
@@ -172,7 +171,6 @@ export default function ChatUI() {
                   <ChatMessages
                     onSpeak={handleSpeak}
                     isSpeaking={isSpeaking}
-
                   />
                   {/* Scroll anchor */}
                   <div ref={messagesEndRef} />
@@ -196,7 +194,6 @@ export default function ChatUI() {
                   <ChatMessages
                     onSpeak={handleSpeak}
                     isSpeaking={isSpeaking}
-
                   />
                   {/* Scroll anchor */}
                   <div ref={messagesEndRef} />
@@ -213,13 +210,11 @@ export default function ChatUI() {
                   <ChatMessages
                     onSpeak={handleSpeak}
                     isSpeaking={isSpeaking}
-
                   />
                 ) : (
                   <div className="rounded-lg p-4">
                     <span className="text-muted-foreground text-3xl font-semibold">
                       {userData.profile.name !== "" ? `Hello ${userData.profile.name}! 👋 What subject would you like to discuss?` : "Hello! What subject would you like to discuss?"}
-
                     </span>
                   </div>
                 )}
@@ -241,6 +236,6 @@ export default function ChatUI() {
           </>
         )
       }
-    </div >
+    </div>
   )
 }

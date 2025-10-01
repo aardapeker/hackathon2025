@@ -1,4 +1,4 @@
-import type { Voice, VoiceBackend } from "@/types"
+import type { Voice } from "@/types"
 
 import { useEffect, useState } from "react"
 
@@ -25,15 +25,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
-
 import getAvailableVoices from "@/functions/get_available_voices"
 import { allLangCodes, languageCodeMap } from "@/constants/language_codes"
+import { initialVoiceSettings } from "@/constants/initial_profile"
 
 export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
   const savedStr = localStorage.getItem("settings")
-  const saved: Voice = savedStr ? JSON.parse(savedStr) : { languageCode: "en-US", voiceName: "en-US-Chirp3-HD-Sadachbia", voiceGender: "MALE" }
+  const saved: Voice = savedStr ? JSON.parse(savedStr) : initialVoiceSettings
 
-  const [voices, setVoices] = useState<VoiceBackend[]>([])
+  const [voices, setVoices] = useState<Voice[]>([])
   const [languageCode, setLanguageCode] = useState(saved.languageCode)
   const [voiceName, setVoiceName] = useState(saved.voiceName)
   const [voiceGender, setVoiceGender] = useState(saved.voiceGender)
@@ -85,7 +85,6 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
                     {languageCodeMap[code] || code}
                   </SelectItem>
                 ))}
-
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -111,13 +110,12 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
               <SelectGroup>
                 <SelectLabel>Voice Name</SelectLabel>
                 {voices && voices.map(voice => {
-                  const displayName = voice.name.split('-').slice(2).join('-')
+                  const displayName = voice.voiceName.split('-').slice(2).join('-')
                   if (displayName !== "") {
-                    return <SelectItem key={voice.name} value={voice.name}>
+                    return <SelectItem key={voice.voiceName} value={voice.voiceName}>
                       {displayName}
                     </SelectItem>
                   }
-
                 })}
               </SelectGroup>
             </SelectContent>

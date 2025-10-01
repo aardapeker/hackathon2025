@@ -36,7 +36,6 @@ export function MessagesProvider({
   const startLoading = useCallback(() => setIsLoading(true), [])
   const stopLoading = useCallback(() => setIsLoading(false), [])
 
-
   const addUserMessage = useCallback((m: UserMessage) => {
     setMessages(prev => [...prev, m])
     startLoading()

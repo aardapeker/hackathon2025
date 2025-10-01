@@ -180,7 +180,6 @@ function ChatMessages({ onSpeak, isSpeaking }: MessageProps) {
                   />
                   <div className="flex flex-wrap gap-2 my-4">
                     {(message.content as Output).nextChatMessages.map((msg, idx) => (
-
                       <Button
                         key={idx}
                         type="button"
