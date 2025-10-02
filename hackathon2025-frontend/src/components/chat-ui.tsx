@@ -1,4 +1,4 @@
-import type { Output, PracticeResponse, UserData, Voice } from "app/types"
+import type { Output, PracticeResponse, UserData, Voice } from "~/types"
 
 import { useEffect, useRef, useState } from "react"
 
