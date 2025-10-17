@@ -11,6 +11,8 @@ import {
 
 import LoadingPage from "./routes/loading-page"
 
+import { Toaster } from "./components/ui/sonner"
+
 import { ThemeProvider } from "~/contexts/theme-provider"
 import { MessagesProvider } from "~/contexts/messages-provider"
 
@@ -42,6 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
           <MessagesProvider>
             {children}
+            <Toaster />
           </MessagesProvider>
         </ThemeProvider>
         <ScrollRestoration />

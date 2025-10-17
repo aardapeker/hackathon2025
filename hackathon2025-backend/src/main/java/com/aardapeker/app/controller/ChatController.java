@@ -1,5 +1,6 @@
 package com.aardapeker.app.controller;
 
+import com.aardapeker.app.service.STTService;
 import com.aardapeker.app.service.TTSService;
 import com.aardapeker.app.dto.*;
 import com.aardapeker.app.prompts.SystemPrompts;
@@ -19,16 +20,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1")
 public class ChatController {
     private final ChatClient chatClient;
     private final TTSService ttsService;
+    private final STTService sttService;
 
-    public ChatController(ChatClient.Builder builder, TTSService ttsService) {
+    public ChatController(ChatClient.Builder builder, TTSService ttsService, STTService sttService) {
         this.chatClient = builder.build();
         this.ttsService = ttsService;
+        this.sttService = sttService;
     }
 
     @GetMapping("/test")
@@ -191,5 +195,18 @@ public class ChatController {
         return ttsService.synthesizeSpeech(request.text(), request.voiceName(), request.voiceGender(),
                 request.languageCode());
     }
+
+//    @PostMapping("/stt")
+//    public String transcribeAudio(@RequestBody STTRequest request) throws IOException {
+//        return sttService.transcribeAudio(request.audioData(), request.languageCode());
+//    }
+@PostMapping("/stt")
+public String transcribeAudio(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam(value = "languageCode", defaultValue = "en-US") String languageCode) throws IOException, InterruptedException  {
+
+    byte[] audioData = file.getBytes();
+    return sttService.transcribeAudio(audioData, languageCode);
+}
 
 }

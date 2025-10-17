@@ -1,5 +1,6 @@
-import { MessagesProviderContext } from "~/contexts/messages-provider"
 import { useContext } from "react"
+
+import { MessagesProviderContext } from "~/contexts/messages-provider"
 
 export function useMessages() {
   const ctx = useContext(MessagesProviderContext)

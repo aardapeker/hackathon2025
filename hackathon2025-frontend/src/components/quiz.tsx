@@ -19,7 +19,12 @@ export type UserAnswer = {
   selectedAnswer: string
 }
 
-function Quiz({ questions, onSetSplit }: { questions: Question[], onSetSplit: (data: boolean) => void }) {
+type QuizProps = {
+  questions: Question[],
+  onSetSplit: (data: boolean) => void
+}
+
+function Quiz({ questions, onSetSplit }: QuizProps) {
   const [selectedAnswer, setSelectedAnswer] = useState("")
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -87,7 +92,7 @@ function Quiz({ questions, onSetSplit }: { questions: Question[], onSetSplit: (d
                   <div
                     className={`flex items-center space-x-3 rounded-lg transition-all cursor-pointer hover:bg-accent hover:text-accent-foreground ${selectedAnswer === index.toString()
                       ? `${option === currentQuestion.correctAnswer ? "bg-success hover:bg-success" : "bg-destructive hover:bg-destructive"}  text-accent-foreground`
-                      : (selectedAnswer !== "" && currentQuestion.correctAnswer === option ? "bg-success hover:bg-success" : "bg-secondary text-muted-foreground ")
+                      : (selectedAnswer !== "" && currentQuestion.correctAnswer === option ? "bg-success hover:bg-success" : "bg-secondary text-muted-foreground")
                       }`}
                     style={selectedAnswer !== "" ? { pointerEvents: "none" } : {}}
                   >

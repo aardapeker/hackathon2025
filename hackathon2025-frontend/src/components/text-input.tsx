@@ -50,15 +50,11 @@ function TextInput({ formRef, newInputValue, onInputValue }: TextInputProps) {
     <Textarea
       name="content"
       placeholder="Ask anything..."
-      className="custom-scrollbar w-full px-3 py-2 resize-none border-0 rounded-2xl bg-transparent shadow-none text-foreground placeholder-muted-foreground focus:outline-none focus-visible:ring-0 focus:ring-0 text-base leading-6"
+      className="custom-scrollbar overflow-y-auto w-full px-3 py-2 resize-none border-0 rounded-2xl bg-transparent shadow-none text-foreground placeholder-muted-foreground focus:outline-none focus-visible:ring-0 focus:ring-0 text-base leading-6"
       rows={1}
       value={inputValue}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
-      style={{
-        maxHeight: "150px",
-        overflowY: "auto"
-      }}
     />
   )
 }

@@ -8,7 +8,7 @@ public class ErrorReferenceTable {
                 ### 📘 Error Type Reference Table
 
                 ---
-                |  Key (kebab-case)         | Meaning/Focus                               | Example Mistake                           | Corrected Example                       |
+                |  Key                      | Meaning/Focus                               | Example Mistake                           | Corrected Example                       |
                 |---------------------------|---------------------------------------------|-------------------------------------------|-----------------------------------------|
                 | `capitalization`          | Incorrect use of uppercase/lowercase        | `i love coding.`                          | `I love coding.`                        |
                 | `punctuation`             | Missing or misused punctuation              | `Where are you`                           | `Where are you?`                        |

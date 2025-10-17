@@ -25,7 +25,12 @@ import { renderCounter } from "~/functions/render_counter"
 
 import { initialVoiceSettings } from "~/constants/initial_profile"
 
-export default function ChatUI({ loaderData, actionData }: { loaderData: string, actionData: PracticeResponse | undefined }) {
+type ChatUIProps = {
+  loaderData: string,
+  actionData: PracticeResponse | undefined
+}
+
+export default function ChatUI({ loaderData, actionData }: ChatUIProps) {
 
   ///////////////////////// Render Counter ////////////////////////////
   const counterRef = useRef(0)

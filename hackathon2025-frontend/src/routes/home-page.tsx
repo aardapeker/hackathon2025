@@ -1,5 +1,6 @@
-import type { Route } from "./+types/home"
+import type { Route } from "./+types/home-page"
 import type { PracticeResponse, UserData } from "~/types"
+
 
 import ChatUI from "~/components/chat-ui"
 
@@ -89,6 +90,6 @@ export async function clientLoader() {
   return userData
 }
 
-export default function Home({ loaderData, actionData }: Route.ComponentProps) {
+export default function HomePage({ loaderData, actionData }: Route.ComponentProps) {
   return <ChatUI loaderData={loaderData as string} actionData={actionData as PracticeResponse | undefined} />
 }

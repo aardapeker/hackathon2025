@@ -4,23 +4,22 @@ import { useRef, useState } from "react"
 import { Form } from "react-router"
 
 import { nanoid } from 'nanoid'
+import { motion, AnimatePresence } from "framer-motion"
 
 import TextInput from "./text-input"
 import SendButton from "./send-button"
-import { VoiceInput } from "./voice-input"
+import VoiceInput from "./voice-input"
 import { SettingsSheet } from "./settings-sheet"
 
 import { useMessages } from "~/hooks/use-messages"
 
 import { renderCounter } from "~/functions/render_counter"
 
-type InputFormProps = {
-  onData: (data: Voice) => void
-}
-
 function InputForm({
   onData,
-}: InputFormProps) {
+}: {
+  onData: (data: Voice) => void
+}) {
 
   ///////////////////////// Render Counter ////////////////////////////
   const counterRef = useRef(0)
@@ -61,13 +60,17 @@ function InputForm({
     }
   }
 
-  const handleResult = (data: string, isFinal: boolean) => {
+  const handleResult = async (data: string, isFinal: boolean) => {
     if (!isFinal) return
-
     if (data.trim() === "") return
 
     console.log(data, "Voice Input!!")
     setNewInputValue(data)
+
+    // Auto-trigger hasInput state
+    if (data.trim() !== "") {
+      setHasInput(true)
+    }
   }
 
   return (
@@ -90,9 +93,36 @@ function InputForm({
             {/* Footer Buttons */}
             <div className="flex items-center justify-between px-3 py-2 border-t border-border">
               <SettingsSheet onData={onData} />
-              <div className="flex gap-2">
-                <VoiceInput onResult={handleResult} />
-                <SendButton hasInput={hasInput} />
+              <div className="flex gap-2 relative">
+                <AnimatePresence mode="wait">
+                  {hasInput ? (
+                    <motion.div
+                      key="send-button"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      transition={{
+                        duration: 0.2,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <SendButton hasInput={hasInput} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="voice-button"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      transition={{
+                        duration: 0.2,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <VoiceInput onResult={handleResult} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>

@@ -5,17 +5,19 @@ import type {
   QuizResults,
 } from "~/types"
 
+interface PostUserInput {
+  message: string
+  profile: Profile
+  quizResults: QuizResults
+  lastMessages: LastMessage[]
+}
+
 export async function postUserInput({
   message,
   profile,
   quizResults,
   lastMessages,
-}: {
-  message: string
-  profile: Profile
-  quizResults: QuizResults
-  lastMessages: LastMessage[]
-}): Promise<PracticeResponse> {
+}: PostUserInput): Promise<PracticeResponse> {
   const rootUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8080"
   const url = `${rootUrl}/api/v1/practice/structured`
 

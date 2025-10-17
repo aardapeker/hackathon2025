@@ -15,9 +15,9 @@ export async function clientLoader() {
   return data
 }
 
-function RootPage({ loaderData }: Route.ComponentProps) {
+function RootLayout({ loaderData }: Route.ComponentProps) {
 
-  console.log(loaderData, "from RootPage")
+  console.log(loaderData, "from RootLayout")
 
   return (
     <div className="min-h-screen">
@@ -26,4 +26,4 @@ function RootPage({ loaderData }: Route.ComponentProps) {
   )
 }
 
-export default RootPage
+export default RootLayout

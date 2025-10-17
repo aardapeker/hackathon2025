@@ -26,6 +26,7 @@ import {
 } from "~/components/ui/sheet"
 
 import getAvailableVoices from "~/functions/get_available_voices"
+
 import { allLangCodes, languageCodeMap } from "~/constants/language_codes"
 import { initialVoiceSettings } from "~/constants/initial_profile"
 
@@ -40,7 +41,7 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
 
   useEffect(() => {
     const getVoices = async () => {
-      const availableVoices = await getAvailableVoices(languageCode, voiceGender)
+      const availableVoices = await getAvailableVoices({ languageCode, voiceGender })
       setVoices(availableVoices)
     }
     getVoices()
@@ -59,7 +60,7 @@ export function SettingsSheet({ onData }: { onData: (data: Voice) => void }) {
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors duration-200"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl transition-colors duration-200 cursor-pointer"
         >
           <Settings className="w-4 h-4" />
           <span className="hidden sm:inline">Settings</span>
