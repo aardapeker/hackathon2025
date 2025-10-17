@@ -60,6 +60,7 @@ build
 *.njsproj
 *.sln
 *.sw?
+.continue
 
 ### Personal ###
 todo.md
